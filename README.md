@@ -1,2 +1,2 @@
 # Sentinel_Project
-## Proyecto desarrollado por Wara Yaxche y Dani
+#### (CC) Proyect developed by Wara, Yaxche & Dani
