@@ -1,14 +1,18 @@
-from user import user
-from incident import incident
 from datetime import datetime
+from uuid import UUID, uuid4
 
 class Comment():
-    def __init__(self, content, user_author: user, ticket: incident):
+    def __init__(self, content, author_id: UUID, incident_id: UUID, id: UUID = None, timestamp: datetime = None):
+        self.id = id or uuid4()
         self.content = content
-        self.author = user_author.id
-        self.ticket = ticket.id
-        self.timestamp = datetime.now()
+        self.author_id = author_id
+        self.incident_id = incident_id
+        self.timestamp = timestamp or datetime.now()
+        if not content or not content.strip():
+            raise ValueError("Comment content cannot be empty")
+
+
 
 
     def __repr__(self):
-        return f"<Comment by {self.author}: {self.content}>"
+        return f"<Comment by {self.author_id}: {self.content}>"
