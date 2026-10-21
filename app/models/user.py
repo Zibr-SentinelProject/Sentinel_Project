@@ -1,4 +1,4 @@
-class User:
+class user:
 
     def __init__(self, id, name, email, password):
 
@@ -13,7 +13,7 @@ class User:
     def create_tickets():
         return True
 
-class Analyst(User):
+class analyst(user):
 
     def __init__(self):
         pass
@@ -22,7 +22,7 @@ class Analyst(User):
         return True
 
 
-class Employee(User):
+class employee(user):
 
     def _init_(self):
         pass
