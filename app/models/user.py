@@ -1,8 +1,10 @@
+import uuid
+
 class user:
 
     def __init__(self, id, name, email, password):
 
-        self.id = id
+        self.id = uuid.uuid4()
         self.name = name
         self.email = email
         self.password = password
@@ -13,6 +15,15 @@ class user:
     def create_tickets():
         return True
 
+    def __eq__(self, other):
+
+        if not isinstance(other,user):
+            return False
+        elif self.id == other.id and self.email == other.email:
+            return True
+        
+        return False
+        
 class analyst(user):
 
     def __init__(self):

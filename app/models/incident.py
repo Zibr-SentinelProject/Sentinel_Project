@@ -3,26 +3,28 @@ import uuid
 
 from user import user, analyst
 
-print(datetime.today())
-
 class incident:
 
-    STATES = ["OPEN", "PENDIG", "COLSE"]
+    STATES = ["OPEN", "PENDIG", "COLSED"]
     SEVERITIS = ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
 
-    def __init__(self, user:user, title, description, severity):
-        self.id = str(uuid.uuid4())
-        self.id_user = user.id
+    def __init__(self, user_id: uuid, title: str, description: str, severity: int):
+        self.id = uuid.uuid4()
+        self.user_id = user_id
         self.title = title
         self.description = description
         self.severity = severity
         self.state = 0
         self.open_date = datetime.today()
         self.close_date = None
-        self.id_analyst = None
+        self.analyst_id = None
 
     def close(self):
         self.close_date = datetime.today()
+        self.state = 2
+        return None
 
-    def assign(self, user:analyst):
-        self.id_analyst = user.id
+    def assign(self, analyst:analyst):
+
+        self.state = 1
+        return True
