@@ -17,3 +17,5 @@ __pycache__/
 
 # Tutorial
 info.txt
+
+.docker-compose.yml
