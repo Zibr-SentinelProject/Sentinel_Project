@@ -6,21 +6,20 @@ class Attachment():
     PATHFILE = "attachments/"
     ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "application/pdf"]
     
-    def __init__(self, ticket: incident, filename: str, filetype: str, filesize: int):
-        self.ticket = ticket.id
+    def __init__(self, ticket_id, filename: str, filetype: str, filesize: int):
+        self.ticket = ticket_id
         self.filename = filename
         self.filetype = filetype
         self.filesize = filesize
         self.path = self.PATHFILE + filename
         
-    def is_valid_filetype(self):
+    def is_valid_filetype(self)-> bool:
         return self.filetype in self.ALLOWED_FILE_TYPES
     
-    def is_valid_filesize(self):
-        # Example: Limit file size to 5MB
+    def is_valid_filesize(self) -> bool:
         return self.filesize <= self.MAX_FILE_SIZE_MB * 1024 * 1024
     
-    def is_valid(self):
+    def is_valid(self) -> bool:
         return self.is_valid_filetype() and self.is_valid_filesize()
     
     def __repr__(self):

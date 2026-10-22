@@ -12,7 +12,5 @@ class Comment():
             raise ValueError("Comment content cannot be empty")
 
 
-
-
     def __repr__(self):
         return f"<Comment by {self.author_id}: {self.content}>"
