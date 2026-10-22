@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS user (
     id       UUID PRIMARY KEY DEFAULT UUID(),
     name     VARCHAR(100) NOT NULL,
     email    VARCHAR(255) NOT NULL UNIQUE,
@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
     role     ENUM('EMPLOYEE', 'ANALYST') NOT NULL DEFAULT 'EMPLOYEE'
 );
 
-CREATE TABLE IF NOT EXISTS incidents (
+CREATE TABLE IF NOT EXISTS incident (
     id          UUID PRIMARY KEY DEFAULT UUID(),
     user_id     UUID NOT NULL,
     analyst_id  UUID NULL,
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS incidents (
     CONSTRAINT fk_incidents_analyst FOREIGN KEY (analyst_id) REFERENCES users (id)
 );
 
-CREATE TABLE IF NOT EXISTS comments (
+CREATE TABLE IF NOT EXISTS comment (
     id          UUID PRIMARY KEY DEFAULT UUID(),
     content     TEXT NOT NULL,
     author_id   UUID NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS comments (
     CONSTRAINT fk_comments_incident FOREIGN KEY (incident_id) REFERENCES incidents (id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS attachments (
+CREATE TABLE IF NOT EXISTS attachment (
     id          UUID PRIMARY KEY DEFAULT UUID(),
     incident_id UUID NOT NULL,
     filename    VARCHAR(255) NOT NULL,
