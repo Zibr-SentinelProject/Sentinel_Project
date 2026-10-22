@@ -8,9 +8,6 @@ from app.models.comment import Comment
 
 class CommentRepository (RepositoryABC):
 
-    def __init__(self, db_connection):
-        self.db_connection = db_connection
-
     def _row_to_comment(self, row: dict) -> Comment:
         """Convert a database row (dict) into a Comment object."""
         return Comment(
