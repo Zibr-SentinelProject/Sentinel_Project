@@ -15,16 +15,20 @@ class incident:
         self.description = description
         self.severity = severity
         self.state = 0
-        self.open_date = datetime.today()
+        self.open_date = datetime.today().replace(microsecond=0)
+
         self.close_date = None
         self.analyst_id = None
 
     def close(self):
-        self.close_date = datetime.today()
+        self.close_date = datetime.today().replace(microsecond=0)
+
         self.state = 2
         return None
 
     def assign(self, analyst:analyst):
-
+        if ():
+            return False
+        self.analyst_id = analyst.id
         self.state = 1
         return True

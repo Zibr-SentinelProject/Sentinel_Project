@@ -12,6 +12,7 @@ class RepositoryABC:
     def create(self, entity):
         raise NotImplementedError("Subclasses must implement this method.")
 
+#TODO Check if the update with passing the id
     def update(self, id, entity):
         raise NotImplementedError("Subclasses must implement this method.")
 
