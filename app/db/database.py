@@ -9,12 +9,16 @@ load_dotenv()
 
 def create_connection():
     """Open a new PyMySQL connection using the settings in the .env file."""
+    db_name = os.getenv("DB_NAME")
+    if not db_name:
+        raise RuntimeError("DB_NAME no está definida en el archivo .env")
+
     return pymysql.connect(
     host=os.getenv("DB_HOST", "localhost"),
     port=int(os.getenv("DB_PORT", 3306)),
     user=os.getenv("DB_USER"),
     password=os.getenv("DB_PASSWORD"),
-    database=os.getenv("DB_NAME"),
+    database=db_name,
     charset="utf8mb4",
     autocommit=False, 
     )
