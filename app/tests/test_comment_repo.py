@@ -40,7 +40,7 @@ def test_create_executes_insert_and_commits(repo, connection, cursor):
 
     query, params = cursor.execute.call_args.args
     assert query.startswith("INSERT INTO comments")
-    assert params == (str(new.id), "Un comentario", str(author), str(incident), new.timestamp)
+    assert params == (new.id, "Un comentario", author, incident, new.timestamp)
     connection.commit.assert_called_once()
     connection.rollback.assert_not_called()
     assert result is new
@@ -77,7 +77,7 @@ def test_get_by_id_returns_comment_from_row(repo, cursor):
     assert found.author_id == author
     assert found.incident_id == incident
     assert found.timestamp == timestamp
-    assert cursor.execute.call_args.args[1] == (str(comment_id),)
+    assert cursor.execute.call_args.args[1] == (comment_id,)
 
 
 def test_get_by_id_returns_none_when_no_row(repo, cursor):
@@ -104,7 +104,7 @@ def test_get_all_by_incident_maps_all_rows(repo, cursor):
 
     assert [c.content for c in result] == ["Comentario 0", "Comentario 1"]
     assert all(c.incident_id == incident for c in result)
-    assert cursor.execute.call_args.args[1] == (str(incident),)
+    assert cursor.execute.call_args.args[1] == (incident,)
 
 
 def test_get_all_by_incident_returns_empty_list(repo, cursor):
