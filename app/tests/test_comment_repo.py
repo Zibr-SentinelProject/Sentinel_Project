@@ -10,7 +10,7 @@ from unittest.mock import MagicMock
 import pymysql
 import pytest
 
-from app.models.comment import comment
+from app.models.comment import Comment
 from app.repositories.comment_repo import CommentRepository
 
 
@@ -34,7 +34,7 @@ def repo(connection):
 def test_create_executes_insert_and_commits(repo, connection, cursor):
     author = uuid.uuid4()
     incident = uuid.uuid4()
-    new = comment("Un comentario", author, incident)
+    new = Comment("Un comentario", author, incident)
 
     result = repo.create(new)
 
@@ -48,7 +48,7 @@ def test_create_executes_insert_and_commits(repo, connection, cursor):
 
 def test_create_rolls_back_and_reraises_on_db_error(repo, connection, cursor):
     cursor.execute.side_effect = pymysql.MySQLError("fallo simulado")
-    new = comment("Otro", uuid.uuid4(), uuid.uuid4())
+    new = Comment("Otro", uuid.uuid4(), uuid.uuid4())
 
     with pytest.raises(pymysql.MySQLError):
         repo.create(new)
@@ -115,4 +115,4 @@ def test_get_all_by_incident_returns_empty_list(repo, cursor):
 
 def test_comment_with_blank_content_is_rejected():
     with pytest.raises(ValueError):
-        comment("   ", uuid.uuid4(), uuid.uuid4())
+        Comment("   ", uuid.uuid4(), uuid.uuid4())
