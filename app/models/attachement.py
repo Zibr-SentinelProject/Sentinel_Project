@@ -1,13 +1,14 @@
-from incident import Incident
+from uuid import UUID, uuid4
 
 class Attachment():
-    
+
     MAX_FILE_SIZE_MB = 5
     PATHFILE = "attachments/"
     ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "application/pdf"]
-    
-    def __init__(self, ticket_id, filename: str, filetype: str, filesize: int):
-        self.ticket = ticket_id
+
+    def __init__(self, incident_id: UUID, filename: str, filetype: str, filesize: int, id: UUID = None):
+        self.id = id or uuid4()
+        self.incident_id = incident_id
         self.filename = filename
         self.filetype = filetype
         self.filesize = filesize
