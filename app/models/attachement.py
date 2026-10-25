@@ -1,4 +1,4 @@
-from incident import incident
+from incident import Incident
 
 class Attachment():
     

@@ -1,6 +1,6 @@
 import uuid
 
-class user:
+class User:
 
     def __init__(self, id, name, email, password):
 
@@ -24,7 +24,7 @@ class user:
         
         return False
         
-class analyst(user):
+class Analyst(User):
 
     def __init__(self):
         pass
@@ -33,7 +33,7 @@ class analyst(user):
         return True
 
 
-class employee(user):
+class Employee(ser):
 
     def _init_(self):
         pass

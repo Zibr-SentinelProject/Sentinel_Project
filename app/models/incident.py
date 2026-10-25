@@ -1,9 +1,9 @@
 from datetime import datetime
 import uuid
 
-from user import user, analyst
+from user import User, Analyst
 
-class incident:
+class Incident:
 
     STATES = ["OPEN", "PENDIG", "COLSED"]
     SEVERITIS = ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
