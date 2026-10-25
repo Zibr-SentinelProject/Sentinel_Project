@@ -46,7 +46,10 @@ class CommentRepository (RepositoryABC):
         return comment
 
     def get_all_by_incident(self, incident_id: UUID):
-        query = "SELECT id, content, author_id, incident_id, timestamp FROM comments WHERE incident_id = %s ORDER BY timestamp"
+        query = (
+            "SELECT id, content, author_id, incident_id, timestamp FROM comments "
+            "WHERE incident_id = %s ORDER BY timestamp"
+        )
         with self.db_connection.cursor(DictCursor) as cursor:
             cursor.execute(query, (incident_id,))
             results = cursor.fetchall()

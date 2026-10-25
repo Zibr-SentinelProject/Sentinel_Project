@@ -97,7 +97,7 @@ class UserRepository(RepositoryABC):
         try:
             with self.db_connection.cursor() as cursor:
                 cursor.execute(query, (
-                    #No necesitas convertirlo a str, porque ya son str, no rompe nada, pero por si lo quieres quitar 
+                    #No necesitas convertirlo a str, porque ya son str, no rompe nada, pero por si lo quieres quitar
                     str(updated_user.name),
                     str(updated_user.email),
                     str(updated_user.password),

@@ -20,7 +20,7 @@ def create_connection():
     password=os.getenv("DB_PASSWORD"),
     database=db_name,
     charset="utf8mb4",
-    autocommit=False, 
+    autocommit=False,
     )
 
 

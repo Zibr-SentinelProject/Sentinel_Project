@@ -5,15 +5,18 @@ import pymysql.cursors
 from app.repositories.abc_repo import RepositoryABC
 from app.models.incident import Incident
 
-class incidentRepository (RepositoryABC):
+class IncidentRepository (RepositoryABC):
 
     def create(self, incident: Incident):
-        query = "INSERT INTO incident (id, user_id, title, description, severity, state, open_date, close_date, analyst_id)" \
-        " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        query = (
+            "INSERT INTO incident (id, user_id, title, description, severity, state, open_date, close_date, "
+            "analyst_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        )
         try:
             with self.db_connection.cursor() as cursor:
                 cursor.execute(query, (
-                    incident.id, incident.user_id, incident.title, incident.description, incident.severity, incident.state,
+                    incident.id, incident.user_id, incident.title, incident.description,
+                    incident.severity, incident.state,
                     incident.open_date, incident.close_date,
                     # analyst_id puede ser None (todavía sin asignar), y la base de datos lo acepta como NULL.
                     incident.analyst_id,

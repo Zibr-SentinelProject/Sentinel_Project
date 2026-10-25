@@ -19,7 +19,10 @@ class AttachmentRepository (RepositoryABC):
         )
 
     def create(self, attachment: Attachment):
-        query = "INSERT INTO attachment (id, incident_id, filename, filetype, filesize, path) VALUES (%s, %s, %s, %s, %s, %s)"
+        query = (
+            "INSERT INTO attachment (id, incident_id, filename, filetype, filesize, path) "
+            "VALUES (%s, %s, %s, %s, %s, %s)"
+        )
         try:
             with self.db_connection.cursor() as cursor:
                 cursor.execute(query, (

@@ -17,13 +17,13 @@ class User:
 
     def __eq__(self, other):
 
-        if not isinstance(other,user):
+        if not isinstance(other, User):
             return False
         elif self.id == other.id and self.email == other.email:
             return True
-        
+
         return False
-        
+
 class Analyst(User):
 
     def __init__(self):
@@ -33,7 +33,7 @@ class Analyst(User):
         return True
 
 
-class Employee(ser):
+class Employee(User):
 
     def _init_(self):
         pass

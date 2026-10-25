@@ -1,7 +1,7 @@
 from datetime import datetime
 import uuid
 
-from user import User, Analyst
+from app.models.user import Analyst
 
 class Incident:
 
@@ -26,7 +26,7 @@ class Incident:
         self.state = 2
         return None
 
-    def assign(self, analyst:analyst):
+    def assign(self, analyst: Analyst):
         if ():
             return False
         self.analyst_id = analyst.id
