@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS user (
+CREATE OR REPLACE TABLE user (
     id       UUID PRIMARY KEY DEFAULT UUID(),
     name     VARCHAR(100) NOT NULL,
     email    VARCHAR(255) NOT NULL UNIQUE,
@@ -6,17 +6,17 @@ CREATE TABLE IF NOT EXISTS user (
     role     ENUM('EMPLOYEE', 'ANALYST') NOT NULL DEFAULT 'EMPLOYEE'
 );
 
-CREATE TABLE IF NOT EXISTS severity (
+CREATE OR REPLACE TABLE con_severity (
     id          INT(1) NOT NULL,
     name        VARCHAR(8) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS state (
+CREATE OR REPLACE TABLE con_state (
     id          INT(1) NOT NULL,
     name        VARCHAR(7) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS incident (
+CREATE OR REPLACE TABLE incident (
     id          UUID PRIMARY KEY DEFAULT UUID(),
     user_id     UUID NOT NULL,
     analyst_id  UUID NULL,
@@ -28,11 +28,11 @@ CREATE TABLE IF NOT EXISTS incident (
     close_date  DATETIME NULL,
     CONSTRAINT fk_incidents_user FOREIGN KEY (user_id) REFERENCES user (id),
     CONSTRAINT fk_incidents_analyst FOREIGN KEY (analyst_id) REFERENCES user (id),
-    CONSTRAINT fk_incidents_severity FOREIGN KEY (severity_id) REFERENCES severity (id),
-    CONSTRAINT fk_incidents_state FOREIGN KEY (state_id) REFERENCES state (id)
+    CONSTRAINT fk_incidents_severity FOREIGN KEY (severity_id) REFERENCES con_severity (id),
+    CONSTRAINT fk_incidents_state FOREIGN KEY (state_id) REFERENCES con_state (id)
 );
 
-CREATE TABLE IF NOT EXISTS comment (
+CREATE OR REPLACETABLE comment (
     id          UUID PRIMARY KEY DEFAULT UUID(),
     content     TEXT NOT NULL,
     author_id   UUID NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS comment (
     CONSTRAINT fk_comments_incident FOREIGN KEY (incident_id) REFERENCES incident (id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS attachment (
+CREATE OR REPLACETABLE attachment (
     id          UUID PRIMARY KEY DEFAULT UUID(),
     incident_id UUID NOT NULL,
     filename    VARCHAR(255) NOT NULL,
@@ -52,8 +52,8 @@ CREATE TABLE IF NOT EXISTS attachment (
     CONSTRAINT fk_attachments_incident FOREIGN KEY (incident_id) REFERENCES incident (id) ON DELETE CASCADE
 );
 
-INSERT INTO severity (id, name)
+INSERT INTO con_severity (id, name)
 VALUES (1, "LOW"),(2, "MEDIUM"),(3, "HIGH"),(4, "CRITICAL");
 
-INSERT INTO state (id, name)
+INSERT INTO con_state (id, name)
 VALUES (1, "OPEN"),(2, "PENDING"),(3, "CLOSE");
