@@ -1,19 +1,23 @@
 import uuid
 
+
 class User:
+    ROLE = None
 
-    def __init__(self, id, name, email, password):
-
-        self.id = uuid.uuid4()
+    def __init__(self, name, email, password, id=None):
+        self.id = id or uuid.uuid4()
         self.name = name
         self.email = email
         self.password = password
 
-    def view_all_incidents():
+    def view_all_incidents(self):
         pass
 
-    def create_tickets():
+    def create_tickets(self):
         return True
+
+    def is_analyst(self) -> bool:
+        return False
 
     def __eq__(self, other):
 
@@ -24,20 +28,30 @@ class User:
 
         return False
 
+    def __hash__(self):
+        return hash(self.id)
+
+
 class Analyst(User):
 
-    def __init__(self):
-        pass
+    ROLE = "ANALYST"
 
-    def view_all_incidents():
+    def view_all_incidents(self):
+        return True
+
+    def is_analyst(self) -> bool:
         return True
 
 
 class Employee(User):
 
-    def _init_(self):
-        pass
+    ROLE = "EMPLOYEE"
 
-    def view_all_incidents():
+    def view_all_incidents(self):
         return False
 
+
+ROLE_CLASSES = {
+    Analyst.ROLE: Analyst,
+    Employee.ROLE: Employee,
+}

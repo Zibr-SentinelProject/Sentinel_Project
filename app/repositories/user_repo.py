@@ -2,13 +2,14 @@ from uuid import UUID
 from pymysql import MySQLError
 from pymysql.cursors import DictCursor
 from app.repositories.abc_repo import RepositoryABC
-from app.models.user import User
+from app.models.user import User, ROLE_CLASSES
 
 class UserRepository(RepositoryABC):
 
     def _row_to_user(self,row: dict) -> User:
-
-        return User(
+        # La columna role decide si devolvemos un Analyst o un Employee.
+        user_class = ROLE_CLASSES[row["role"]]
+        return user_class(
             id=UUID(str(row["id"])),
             name=str(row["name"]),
             email=str(row["email"]),
@@ -28,7 +29,7 @@ class UserRepository(RepositoryABC):
     #         self.db_connection.rollback()
     #         raise
     def get_all(self):
-        query = "SELECT id, name, email, password FROM user"
+        query = "SELECT id, name, email, password, role FROM user"
         with self.db_connection.cursor(DictCursor) as cursor:
             cursor.execute(query)
             results = cursor.fetchall()
@@ -41,9 +42,16 @@ class UserRepository(RepositoryABC):
     def get_by_id(self, user_id: UUID):
         #Le quité un =
         # query = "SELECT id, name, email, password FROM user WHERE id == %s"
-        query = "SELECT id, name, email, password FROM user WHERE id = %s"
+        query = "SELECT id, name, email, password, role FROM user WHERE id = %s"
         with self.db_connection.cursor(DictCursor) as cursor:
             cursor.execute(query, (user_id,))
+            result = cursor.fetchone()
+        return self._row_to_user(result) if result else None
+
+    def get_by_email(self, email: str):
+        query = "SELECT id, name, email, password, role FROM user WHERE email = %s"
+        with self.db_connection.cursor(DictCursor) as cursor:
+            cursor.execute(query, (email,))
             result = cursor.fetchone()
         return self._row_to_user(result) if result else None
 
@@ -63,11 +71,11 @@ class UserRepository(RepositoryABC):
     #         self.db_connection.rollback()
     #         raise
     def create(self, new_user: User):
-        query = "INSERT INTO user (id, name, email, password) VALUES (%s, %s, %s, %s)"
+        query = "INSERT INTO user (id, name, email, password, role) VALUES (%s, %s, %s, %s, %s)"
         try:
             with self.db_connection.cursor() as cursor:
                 cursor.execute(query, (
-                    new_user.id, str(new_user.name), str(new_user.email), str(new_user.password)
+                    new_user.id, str(new_user.name), str(new_user.email), str(new_user.password), new_user.ROLE
                 ))
             self.db_connection.commit()
             return new_user
