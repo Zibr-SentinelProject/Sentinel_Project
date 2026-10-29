@@ -1,6 +1,7 @@
 from uuid import UUID
 
-import pymysql.cursors
+from pymysql import MySQLError
+from pymysql.cursors import DictCursor
 
 from app.repositories.abc_repo import RepositoryABC
 from app.models.incident import Incident
@@ -23,10 +24,28 @@ class IncidentRepository (RepositoryABC):
                 ))
             self.db_connection.commit()
             return incident
-        except pymysql.MySQLError as e:
+        except MySQLError as e:
             print(f"Error inserting incident: {e}")
             self.db_connection.rollback()
             raise
+
+    def get_all(self):
+        query = "SELECT i.id, i.user_id, i.analyst_id, i.title, i.description, i.severity_id, s.name AS severity_name, i.state_id, st.name AS state_name, i.open_date, i.close_date, u.name AS user_name, u.email AS user_email, a.name AS analyst_name, a.email AS analyst_email FROM incident i INNER JOIN user u ON u.id = i.user_id LEFT JOIN user a ON a.id = i.analyst_id INNER JOIN con_severity s ON s.id = i.severity_id INNER JOIN con_state st ON st.id = i.state_id ORDER BY i.open_date DESC"
+        with self.db_connection.cursor(DictCursor) as cursor:
+            cursor.execute(query)
+            results = cursor.fetchall()
+        incidents = []
+        for result in results:
+            one_user = self._row_to_user(result)
+            incidents.append(one_user)
+        return incidents
+
+    def get_by_id(self, user_id: UUID):
+        query = "SELECT i.id, i.user_id, i.analyst_id, i.title, i.description, i.severity_id, s.name AS severity_name, i.state_id, st.name AS state_name, i.open_date, i.close_date, u.name AS user_name, u.email AS user_email, a.name AS analyst_name, a.email AS analyst_email FROM incident i INNER JOIN user u ON u.id = i.user_id LEFT JOIN user a ON a.id = i.analyst_id INNER JOIN con_severity s ON s.id = i.severity_id INNER JOIN con_state st ON st.id = i.state_id WHERE i.id = %s"
+        with self.db_connection.cursor(DictCursor) as cursor:
+            cursor.execute(query, (user_id,))
+            result = cursor.fetchone()
+        return self._row_to_user(result) if result else None
 
     def update(self, id: UUID, incident: Incident):
         query = "UPDATE incident SET severity = %s, state = %s, analyst_id = %s WHERE id = %s"
@@ -39,7 +58,7 @@ class IncidentRepository (RepositoryABC):
                 ))
             self.db_connection.commit()
             return incident
-        except pymysql.MySQLError as e:
+        except MySQLError as e:
             print(f"Error editing incident: {e}")
             self.db_connection.rollback()
             raise
@@ -68,7 +87,7 @@ class IncidentRepository (RepositoryABC):
                 deleted = cursor.rowcount > 0
             self.db_connection.commit()
             return deleted
-        except pymysql.MySQLError as e:
+        except MySQLError as e:
             print(f"Error deleting incident: {e}")
             self.db_connection.rollback()
             raise

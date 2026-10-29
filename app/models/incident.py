@@ -16,7 +16,6 @@ class Incident:
         self.severity = severity
         self.state = 0
         self.open_date = datetime.today().replace(microsecond=0)
-
         self.close_date = None
         self.analyst_id = None
 
