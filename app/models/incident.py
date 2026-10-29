@@ -19,15 +19,22 @@ class Incident:
         self.close_date = None
         self.analyst_id = None
 
+    def is_closed(self) -> bool:
+        return self.state == self.CLOSED
+
+    def assign(self, analyst_id: uuid.UUID):
+        if self.is_closed():
+            raise ValueError("A closed incident cannot be assigned")
+        if analyst_id == self.user_id:
+            raise ValueError("An analyst cannot be assigned their own incident")
+        self.analyst_id = analyst_id
+
+    def change_state(self, new_state: int):
+        if new_state not in range(len(self.STATES)):
+            raise ValueError("Invalid state")
+        self.state = new_state
+        if new_state == self.CLOSED:
+            self.close_date = datetime.today().replace(microsecond=0)
+
     def close(self):
-        self.close_date = datetime.today().replace(microsecond=0)
-
-        self.state = 2
-        return None
-
-    def assign(self, analyst: Analyst):
-        if ():
-            return False
-        self.analyst_id = analyst.id
-        self.state = 1
-        return True
+        self.change_state(self.CLOSED)
