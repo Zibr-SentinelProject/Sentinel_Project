@@ -4,6 +4,7 @@ import uuid
 
 class Incident:
 
+
     # Ids de las tablas con_state y con_severity (ver init.sql)
     OPEN = 1
     PENDING = 2
@@ -19,6 +20,7 @@ class Incident:
                  close_date: datetime = None, analyst_id: uuid.UUID = None):
         self.id = id or uuid.uuid4()
         self.user_id = user_id
+        self.analyst_id = None
         self.title = title
         self.description = description
         self.severity = severity
