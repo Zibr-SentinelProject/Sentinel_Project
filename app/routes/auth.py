@@ -31,7 +31,7 @@ def login():
     session.clear()
     session["user_id"] = str(user.id)
     if from_form:
-        return redirect("/")
+        return redirect("/incidents")
     return jsonify(id=str(user.id), name=user.name, email=user.email, role=user.ROLE), 200
 
 
