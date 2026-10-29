@@ -1,11 +1,10 @@
-from datetime import datetime
 from uuid import UUID
 
 from pymysql import MySQLError
 from pymysql.cursors import DictCursor
 
 from app.repositories.abc_repo import RepositoryABC
-from app.models.incident import Incident, ROLE_CLASSES
+from app.models.incident import Incident
 
 class IncidentRepository (RepositoryABC):
     """This class is used to comunicate between the database and the web
@@ -21,32 +20,33 @@ class IncidentRepository (RepositoryABC):
             row (dict): It recibes row of the incident table of the database
 
         Returns:
-            Incident: It return an incident object with the information of the row 
+            Incident: It return an incident object with the information of the row
         """
-        incident_class = ROLE_CLASSES[row["role"]]
-        return incident_class(
-            id=UUID(row["id"]),
-            user_id=UUID(row["user_id"]),
-            analyst_id=UUID(row["analyst_id"]),
+        # analyst_id es NULL mientras el ticket no tenga analista asignado.
+        analyst_id = row["analyst_id"]
+        return Incident(
+            id=UUID(str(row["id"])),
+            user_id=UUID(str(row["user_id"])),
+            analyst_id=UUID(str(analyst_id)) if analyst_id else None,
             title=row["title"],
             description=row["description"],
-            severity=row["severity"],
-            state=row["state"],
+            severity=row["severity_id"],
+            state=row["state_id"],
             open_date=row["open_date"],
-            close_date=row["close_date"]
+            close_date=row["close_date"],
         )
 
     def create(self, incident: Incident):
         """This method is used to add rows of incidents into de database
 
         Args:
-            incident (Incident): It recibes an incident object to insert it 
+            incident (Incident): It recibes an incident object to insert it
 
         Returns:
             incident (Incident): It resturns an incident when the insertion was successful
         """
         query = (
-            "INSERT INTO incident (id, user_id, title, description, severity, state, open_date, close_date, "
+            "INSERT INTO incident (id, user_id, title, description, severity_id, state_id, open_date, close_date, "
             "analyst_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
         )
         try:
@@ -92,7 +92,7 @@ class IncidentRepository (RepositoryABC):
         """This method is used to get one incident from de database
 
         Args:
-            user_id (UUID): It recibes an incident UUID  
+            incident_id (UUID): It recibes an incident UUID
 
         Returns:
             incident (Incident): It retuns an incident when the select was successful
@@ -109,23 +109,39 @@ class IncidentRepository (RepositoryABC):
         with self.db_connection.cursor(DictCursor) as cursor:
             cursor.execute(query, (incident_id,))
             result = cursor.fetchone()
-        return self._row_to_user(result) if result else None
+        return self._row_to_incident(result) if result else None
 
     def get_by_user(self, user_id: UUID):
-        """This method is used to get all the incidents of a user 
+        """This method is used to get all the incidents of a user
 
         Args:
-            user_id (UUID): _description_
+            user_id (UUID): Id del usuario creador de los tickets
+
+        Returns:
+            incidents (List): los tickets creados por ese usuario, del más reciente al más antiguo
         """
-        pass
+        query = (
+            "SELECT i.id, i.user_id, i.analyst_id, i.title, i.description, i.severity_id, s.name AS severity_name, "
+            "i.state_id, st.name AS state_name, i.open_date, i.close_date, u.name AS user_name, "
+            "u.email AS user_email, a.name AS analyst_name, a.email AS analyst_email "
+            "FROM incident i INNER JOIN user u ON u.id = i.user_id LEFT JOIN user a ON a.id = i.analyst_id "
+            "INNER JOIN con_severity s ON s.id = i.severity_id INNER JOIN con_state st ON st.id = i.state_id "
+            "WHERE i.user_id = %s ORDER BY i.open_date DESC"
+        )
+        with self.db_connection.cursor(DictCursor) as cursor:
+            cursor.execute(query, (user_id,))
+            results = cursor.fetchall()
+        return [self._row_to_incident(result) for result in results]
 
     def update(self, id: UUID, incident: Incident):
-        query = "UPDATE incident SET severity = %s, state = %s, analyst_id = %s WHERE id = %s"
+        query = (
+            "UPDATE incident SET severity_id = %s, state_id = %s, analyst_id = %s, close_date = %s WHERE id = %s"
+        )
         try:
             with self.db_connection.cursor() as cursor:
                 cursor.execute(query, (
                     incident.severity, incident.state,
-                    incident.analyst_id,
+                    incident.analyst_id, incident.close_date,
                     id,
                 ))
             self.db_connection.commit()
