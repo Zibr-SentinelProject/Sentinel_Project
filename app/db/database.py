@@ -41,6 +41,24 @@ def close_db(error=None):
         db.close()
 
 
+def check_connection():
+    """Try to reach the database. Return (True, server version) or (False, error message)."""
+    try:
+        connection = create_connection()
+    except (RuntimeError, pymysql.MySQLError) as e:
+        return False, str(e)
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT VERSION()")
+            (version,) = cursor.fetchone()
+        return True, version
+    except pymysql.MySQLError as e:
+        return False, str(e)
+    finally:
+        connection.close()
+
+
 def init_app(app):
     """Hook the database into the Flask app. Call from the app factory."""
     app.teardown_appcontext(close_db)
