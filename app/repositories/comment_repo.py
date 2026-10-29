@@ -20,7 +20,7 @@ class CommentRepository (RepositoryABC):
         )
 
     def create(self, comment: Comment):
-        query = "INSERT INTO comments (id, content, author_id, incident_id, timestamp) VALUES (%s, %s, %s, %s, %s)"
+        query = "INSERT INTO comment (id, content, author_id, incident_id, timestamp) VALUES (%s, %s, %s, %s, %s)"
         try:
             with self.db_connection.cursor() as cursor:
                 cursor.execute(query, (
@@ -35,7 +35,7 @@ class CommentRepository (RepositoryABC):
             raise
 
     def get_by_id(self, comment_id: UUID):
-        query = "SELECT id, content, author_id, incident_id, timestamp FROM comments WHERE id = %s"
+        query = "SELECT id, content, author_id, incident_id, timestamp FROM comment WHERE id = %s"
         with self.db_connection.cursor(DictCursor) as cursor:
             cursor.execute(query, (comment_id,))
             result = cursor.fetchone()
@@ -47,7 +47,7 @@ class CommentRepository (RepositoryABC):
 
     def get_all_by_incident(self, incident_id: UUID):
         query = (
-            "SELECT id, content, author_id, incident_id, timestamp FROM comments "
+            "SELECT id, content, author_id, incident_id, timestamp FROM comment "
             "WHERE incident_id = %s ORDER BY timestamp"
         )
         with self.db_connection.cursor(DictCursor) as cursor:
@@ -56,7 +56,7 @@ class CommentRepository (RepositoryABC):
         return [self._row_to_comment(result) for result in results]
 
     def update(self, id: UUID, comment: Comment):
-        query = "UPDATE comments SET content = %s WHERE id = %s"
+        query = "UPDATE comment SET content = %s WHERE id = %s"
         try:
             with self.db_connection.cursor() as cursor:
                 cursor.execute(query, (comment.content, id))
@@ -68,7 +68,7 @@ class CommentRepository (RepositoryABC):
             raise
 
     def delete(self, id: UUID):
-        query = "DELETE FROM comments WHERE id = %s"
+        query = "DELETE FROM comment WHERE id = %s"
         try:
             with self.db_connection.cursor() as cursor:
                 cursor.execute(query, (id,))
