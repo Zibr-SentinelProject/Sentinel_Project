@@ -31,7 +31,9 @@ class User:
     def __hash__(self):
         return hash(self.id)
 
-
+    def get_rol(self):
+        return self.ROLE
+    
 class Analyst(User):
 
     ROLE = "ANALYST"

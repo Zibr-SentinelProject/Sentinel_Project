@@ -1,5 +1,5 @@
 from uuid import UUID
-
+from app.models.user import User
 
 class UserService:
 
@@ -11,3 +11,11 @@ class UserService:
         if user is None:
             raise LookupError("User not found")
         return user
+
+    def login(self, email, password):
+        log_user = self.user_repo.get_by_email(email)
+        if log_user.password == password:
+            return True
+        else:
+            return False
+        
