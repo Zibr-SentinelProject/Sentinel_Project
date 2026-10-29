@@ -1,7 +1,6 @@
 from datetime import datetime
 import uuid
 
-from app.models.user import Analyst
 
 class Incident:
 

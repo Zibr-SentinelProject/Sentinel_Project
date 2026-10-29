@@ -30,7 +30,14 @@ class IncidentRepository (RepositoryABC):
             raise
 
     def get_all(self):
-        query = "SELECT i.id, i.user_id, i.analyst_id, i.title, i.description, i.severity_id, s.name AS severity_name, i.state_id, st.name AS state_name, i.open_date, i.close_date, u.name AS user_name, u.email AS user_email, a.name AS analyst_name, a.email AS analyst_email FROM incident i INNER JOIN user u ON u.id = i.user_id LEFT JOIN user a ON a.id = i.analyst_id INNER JOIN con_severity s ON s.id = i.severity_id INNER JOIN con_state st ON st.id = i.state_id ORDER BY i.open_date DESC"
+        query = (
+            "SELECT i.id, i.user_id, i.analyst_id, i.title, i.description, i.severity_id, s.name AS severity_name, "
+            "i.state_id, st.name AS state_name, i.open_date, i.close_date, u.name AS user_name, "
+            "u.email AS user_email, a.name AS analyst_name, a.email AS analyst_email "
+            "FROM incident i INNER JOIN user u ON u.id = i.user_id LEFT JOIN user a ON a.id = i.analyst_id "
+            "INNER JOIN con_severity s ON s.id = i.severity_id INNER JOIN con_state st ON st.id = i.state_id "
+            "ORDER BY i.open_date DESC"
+        )
         with self.db_connection.cursor(DictCursor) as cursor:
             cursor.execute(query)
             results = cursor.fetchall()
@@ -41,7 +48,14 @@ class IncidentRepository (RepositoryABC):
         return incidents
 
     def get_by_id(self, user_id: UUID):
-        query = "SELECT i.id, i.user_id, i.analyst_id, i.title, i.description, i.severity_id, s.name AS severity_name, i.state_id, st.name AS state_name, i.open_date, i.close_date, u.name AS user_name, u.email AS user_email, a.name AS analyst_name, a.email AS analyst_email FROM incident i INNER JOIN user u ON u.id = i.user_id LEFT JOIN user a ON a.id = i.analyst_id INNER JOIN con_severity s ON s.id = i.severity_id INNER JOIN con_state st ON st.id = i.state_id WHERE i.id = %s"
+        query = (
+            "SELECT i.id, i.user_id, i.analyst_id, i.title, i.description, i.severity_id, s.name AS severity_name, "
+            "i.state_id, st.name AS state_name, i.open_date, i.close_date, u.name AS user_name, "
+            "u.email AS user_email, a.name AS analyst_name, a.email AS analyst_email "
+            "FROM incident i INNER JOIN user u ON u.id = i.user_id LEFT JOIN user a ON a.id = i.analyst_id "
+            "INNER JOIN con_severity s ON s.id = i.severity_id INNER JOIN con_state st ON st.id = i.state_id "
+            "WHERE i.id = %s"
+        )
         with self.db_connection.cursor(DictCursor) as cursor:
             cursor.execute(query, (user_id,))
             result = cursor.fetchone()
