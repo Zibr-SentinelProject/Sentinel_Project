@@ -16,6 +16,9 @@ class AttachmentService:
         incident = self.incident_service.find_incident(incident_id)
         if not self.incident_service.can_participate(user, incident):
             raise PermissionError("You cannot attach files to this incident")
+        # solo un adjunto por incidente.
+        if self.attachment_repo.get_all_by_incident(incident.id):
+            raise ValueError("This incident already has an attachment")
 
         # basename evita nombres con rutas como "../x" al escribir en disco.
         safe_filename = os.path.basename(filename)
