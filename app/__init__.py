@@ -1,6 +1,4 @@
-from html import escape
-
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 
 from app.db.database import check_connection, init_app as init_db
 
@@ -12,19 +10,7 @@ def create_app():
 
     @app.route("/")
     def index():
-        connected, detail = check_connection()
-        if connected:
-            status = f"Conectado a la base de datos ({escape(detail)})"
-        else:
-            status = f"No conectado a la base de datos: {escape(detail)}"
-        return (
-            "<!doctype html>"
-            "<html lang='es'><head><meta charset='utf-8'><title>Sentinel</title></head>"
-            "<body>"
-            "<h1>Sentinel Project</h1>"
-            f"<p>{status}</p>"
-            "</body></html>"
-        )
+        return render_template("index.html")
 
     @app.route("/health")
     def health():
