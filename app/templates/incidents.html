@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Incidencias{% endblock %}
+
+{% block content %}
+<main>
+  <section class="section">
+    <div class="container">
+      <h1>Incidencias de {{ user.name }}</h1>
+
+      {% if incidents %}
+      <table class="table">
+        <thead>
+          <tr><th>Título</th><th>Severidad</th><th>Estado</th><th>Abierta</th></tr>
+        </thead>
+        <tbody>
+          {% for incident in incidents %}
+          <tr>
+            <td>{{ incident.title }}</td>
+            <td><span class="badge badge-{{ incident.severity_key }}">{{ incident.severity_name }}</span></td>
+            <td>{{ incident.state_name }}</td>
+            <td>{{ incident.open_date }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p>No hay incidencias todavía.</p>
+      {% endif %}
+    </div>
+  </section>
+</main>
+{% endblock %}
