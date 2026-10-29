@@ -4,7 +4,7 @@ from pymysql import MySQLError
 from pymysql.cursors import DictCursor
 
 from app.repositories.abc_repo import RepositoryABC
-from app.models.attachement import Attachment
+from app.models.attachment import Attachment
 
 class AttachmentRepository (RepositoryABC):
 

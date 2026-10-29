@@ -1,7 +1,7 @@
 import os
 from uuid import UUID
 
-from app.models.attachement import Attachment
+from app.models.attachment import Attachment
 from app.models.user import User
 
 

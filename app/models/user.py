@@ -33,7 +33,7 @@ class User:
 
     def get_rol(self):
         return self.ROLE
-    
+
 class Analyst(User):
 
     ROLE = "ANALYST"

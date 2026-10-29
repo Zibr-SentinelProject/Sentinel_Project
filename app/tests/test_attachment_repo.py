@@ -6,7 +6,7 @@ from unittest.mock import MagicMock
 import pymysql
 import pytest
 
-from app.models.attachement import Attachment
+from app.models.attachment import Attachment
 from app.repositories.attachment_repo import AttachmentRepository
 
 

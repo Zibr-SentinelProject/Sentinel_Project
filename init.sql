@@ -63,4 +63,4 @@ INSERT IGNORE INTO con_severity (id, name)
 VALUES (1, 'LOW'), (2, 'MEDIUM'), (3, 'HIGH'), (4, 'CRITICAL');
 
 INSERT IGNORE INTO con_state (id, name)
-VALUES (1, 'OPEN'), (2, 'PENDING'), (3, 'CLOSE');
+VALUES (1, 'OPEN'), (2, 'PENDING'), (3, 'CLOSED');

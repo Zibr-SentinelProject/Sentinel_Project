@@ -1,5 +1,7 @@
 from uuid import UUID
-from app.models.user import User
+
+from werkzeug.security import check_password_hash
+
 
 class UserService:
 
@@ -18,4 +20,10 @@ class UserService:
             return True
         else:
             return False
-        
+
+    def authenticate(self, email: str, password: str):
+        """Devuelve el usuario si el email y la contraseña coinciden; si no, None."""
+        user = self.user_repo.get_by_email(email)
+        if user is None or not check_password_hash(user.password, password):
+            return None
+        return user

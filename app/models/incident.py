@@ -4,19 +4,28 @@ import uuid
 
 class Incident:
 
-    STATES = ["OPEN", "PENDIG", "COLSED"]
-    SEVERITIS = ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+    # Ids de las tablas con_state y con_severity (ver init.sql)
+    OPEN = 1
+    PENDING = 2
+    CLOSED = 3
 
-    def __init__(self, user_id: uuid, title: str, description: str, severity: int):
-        self.id = uuid.uuid4()
+    LOW = 1
+    MEDIUM = 2
+    HIGH = 3
+    CRITICAL = 4
+
+    def __init__(self, user_id: uuid.UUID, title: str, description: str, severity: int,
+                 id: uuid.UUID = None, state: int = None, open_date: datetime = None,
+                 close_date: datetime = None, analyst_id: uuid.UUID = None):
+        self.id = id or uuid.uuid4()
         self.user_id = user_id
         self.title = title
         self.description = description
         self.severity = severity
-        self.state = 0
-        self.open_date = datetime.today().replace(microsecond=0)
-        self.close_date = None
-        self.analyst_id = None
+        self.state = state or self.OPEN
+        self.open_date = open_date or datetime.today().replace(microsecond=0)
+        self.close_date = close_date
+        self.analyst_id = analyst_id
 
     def is_closed(self) -> bool:
         return self.state == self.CLOSED
@@ -29,7 +38,7 @@ class Incident:
         self.analyst_id = analyst_id
 
     def change_state(self, new_state: int):
-        if new_state not in range(len(self.STATES)):
+        if new_state not in (self.OPEN, self.PENDING, self.CLOSED):
             raise ValueError("Invalid state")
         self.state = new_state
         if new_state == self.CLOSED:

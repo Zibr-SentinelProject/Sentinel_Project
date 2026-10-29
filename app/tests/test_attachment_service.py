@@ -9,7 +9,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from app.models.attachement import Attachment
+from app.models.attachment import Attachment
 from app.models.user import Employee
 from app.services.attachment_service import AttachmentService
 
