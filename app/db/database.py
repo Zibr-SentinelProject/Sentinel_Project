@@ -1,10 +1,12 @@
 import os
+from pathlib import Path
 
 import pymysql
 from dotenv import load_dotenv
 from flask import g
 
-load_dotenv()
+# El .env está en la raíz del proyecto (app/db/database.py -> ../../.env), no en el directorio de trabajo.
+load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 
 
 def create_connection():
