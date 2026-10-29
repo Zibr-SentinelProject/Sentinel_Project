@@ -34,6 +34,7 @@ def make_row(incident_id, filename="foto.png"):
         "filename": filename,
         "filetype": "image/png",
         "filesize": 1024,
+        "path": f"attachments/{filename}",
     }
 
 
@@ -45,7 +46,7 @@ def test_create_executes_insert_and_commits(repo, connection, cursor):
 
     query, params = cursor.execute.call_args.args
     assert query.startswith("INSERT INTO attachment")
-    assert params == (new.id, incident, "foto.png", "image/png", 1024, "attachments/foto.png")
+    assert params == (new.id, incident, "foto.png", "image/png", 1024, f"attachments/{new.id}.png")
     connection.commit.assert_called_once()
     connection.rollback.assert_not_called()
     assert result is new
@@ -77,6 +78,17 @@ def test_get_by_id_returns_attachment_from_row(repo, cursor):
     assert found.filetype == "image/png"
     assert found.filesize == 1024
     assert cursor.execute.call_args.args[1] == (attachment_id,)
+
+
+def test_get_by_id_uses_stored_path_for_legacy_rows(repo, cursor):
+    # Fila guardada antes del cambio a <id>.<ext>: la ruta de la BD debe prevalecer.
+    row = make_row(uuid.uuid4(), "foto.png")
+    row["path"] = "attachments/foto.png"
+    cursor.fetchone.return_value = row
+
+    found = repo.get_by_id(uuid.UUID(row["id"]))
+
+    assert found.path == "attachments/foto.png"
 
 
 def test_get_by_id_returns_none_when_no_row(repo, cursor):

@@ -10,13 +10,16 @@ class AttachmentRepository (RepositoryABC):
 
     def _row_to_attachment(self, row: dict) -> Attachment:
         """Convert a database row (dict) into an Attachment object."""
-        return Attachment(
+        attachment = Attachment(
             id=UUID(str(row["id"])),
             incident_id=UUID(str(row["incident_id"])),
             filename=row["filename"],
             filetype=row["filetype"],
             filesize=row["filesize"],
         )
+        # La ruta guardada en la BD manda: los adjuntos antiguos no siguen el formato <id>.<ext>.
+        attachment.path = row["path"]
+        return attachment
 
     def create(self, attachment: Attachment):
         query = (
@@ -37,14 +40,14 @@ class AttachmentRepository (RepositoryABC):
             raise
 
     def get_by_id(self, attachment_id: UUID):
-        query = "SELECT id, incident_id, filename, filetype, filesize FROM attachment WHERE id = %s"
+        query = "SELECT id, incident_id, filename, filetype, filesize, path FROM attachment WHERE id = %s"
         with self.db_connection.cursor(DictCursor) as cursor:
             cursor.execute(query, (attachment_id,))
             result = cursor.fetchone()
         return self._row_to_attachment(result) if result else None
 
     def get_all_by_incident(self, incident_id: UUID):
-        query = "SELECT id, incident_id, filename, filetype, filesize FROM attachment WHERE incident_id = %s"
+        query = "SELECT id, incident_id, filename, filetype, filesize, path FROM attachment WHERE incident_id = %s"
         with self.db_connection.cursor(DictCursor) as cursor:
             cursor.execute(query, (incident_id,))
             results = cursor.fetchall()

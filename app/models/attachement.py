@@ -1,3 +1,4 @@
+import os
 from uuid import UUID, uuid4
 
 class Attachment():
@@ -12,7 +13,9 @@ class Attachment():
         self.filename = filename
         self.filetype = filetype
         self.filesize = filesize
-        self.path = self.PATHFILE + filename
+        # El archivo en disco usa el id (único) y conserva la extensión; el nombre original solo se muestra.
+        extension = os.path.splitext(filename)[1]
+        self.path = self.PATHFILE + f"{self.id}{extension}"
 
     def is_valid_filetype(self)-> bool:
         return self.filetype in self.ALLOWED_FILE_TYPES
