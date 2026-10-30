@@ -32,6 +32,19 @@ class Incident:
     def is_closed(self) -> bool:
         return self.state == self.CLOSED
 
+    @property
+    def severity_name(self) -> str:
+        return {self.LOW: "LOW", self.MEDIUM: "MEDIUM", self.HIGH: "HIGH", self.CRITICAL: "CRITICAL"}[self.severity]
+
+    @property
+    def severity_key(self) -> str:
+        """Nombre en minúsculas, para la clase CSS del badge (badge-low, badge-high...)."""
+        return self.severity_name.lower()
+
+    @property
+    def state_name(self) -> str:
+        return {self.OPEN: "OPEN", self.PENDING: "PENDING", self.CLOSED: "CLOSED"}[self.state]
+
     def assign(self, analyst_id: uuid.UUID):
         if self.is_closed():
             raise ValueError("A closed incident cannot be assigned")
