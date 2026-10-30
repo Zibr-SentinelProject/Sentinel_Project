@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+
+# Entornos virtuales y variables de entorno (.env guarda SECRET_KEY)
+.venv/
+venv/
+.env
+
+# Archivos subidos por los usuarios (adjuntos)
+uploads/
+
+# Caches de herramientas
+.pytest_cache/
+
+# Sistema operativo e IDE
+.DS_Store
+.idea/
