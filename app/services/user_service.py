@@ -14,6 +14,9 @@ class UserService:
             raise LookupError("User not found")
         return user
 
+    def list_analysts(self):
+        pass
+
     def create_user(self, person: User, name: str, email: str, password: str, role: str):
         """Solo un analista puede crear usuarios y elegir su rol."""
         if not person.is_analyst():
@@ -26,6 +29,16 @@ class UserService:
         user_class = ROLE_CLASSES[role]
         new_user = user_class(name, email, password)
         return self.user_repo.create(new_user)
+
+    def change_password(self, user: User, current_password: str, new_password: str):
+        """Cada usuario cambia su propia contraseña, confirmando primero la actual."""
+        if user.password != current_password:
+            raise ValueError("Current password is incorrect")
+        if not new_password:
+            raise ValueError("New password is required")
+
+        user.password = new_password
+        return self.user_repo.update(user.id, user)
 
     def authenticate(self, email: str, password: str):
         """Devuelve el usuario si el email y la contraseña coinciden; si no, None."""
