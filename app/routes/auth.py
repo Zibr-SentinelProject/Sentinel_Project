@@ -27,3 +27,9 @@ def login():
     session.clear()
     session["user_id"] = str(user.id)
     return redirect("/incidents")
+
+
+@auth_bp.get("/logout")
+def logout():
+    session.clear()
+    return redirect("/login")
