@@ -15,7 +15,8 @@ class UserService:
         return user
 
     def list_analysts(self):
-        pass
+        """Los usuarios a los que se puede asignar un ticket."""
+        return [user for user in self.user_repo.get_all() if user.is_analyst()]
 
     def create_user(self, person: User, name: str, email: str, password: str, role: str):
         """Solo un analista puede crear usuarios y elegir su rol."""

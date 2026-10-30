@@ -1,9 +1,13 @@
+from uuid import UUID
+
 from flask import Blueprint, redirect, render_template, request
 
 from app.db.database import get_db
 from app.repositories.incident_repo import IncidentRepository
+from app.repositories.user_repo import UserRepository
 from app.routes.common import current_user, get_attachment_service, get_comment_service
 from app.services.incident_service import IncidentService
+from app.services.user_service import UserService
 
 incidents_bp = Blueprint("incidents", __name__)
 
@@ -61,5 +65,30 @@ def incident_detail(incident_id):
     incident = service.get_incident(user, incident_id)
     comments = get_comment_service().list_comments(user, incident_id)
     attachments = get_attachment_service().list_attachments(user, incident_id)
+    # Solo los analistas asignan tickets, así que solo ellos necesitan la lista de analistas.
+    analysts = UserService(UserRepository(get_db())).list_analysts() if user.is_analyst() else []
     return render_template("incident.html", user=user, incident=incident, comments=comments,
-                           attachments=attachments)
+                           attachments=attachments, analysts=analysts)
+
+
+@incidents_bp.post("/incidents/<uuid:incident_id>/assign")
+def assign_incident(incident_id):
+    user = current_user()
+    if user is None:
+        return redirect("/login")
+
+    analyst_id = UUID(request.form.get("analyst_id"))
+    service = IncidentService(IncidentRepository(get_db()))
+    service.assign_incident(user, incident_id, analyst_id)
+    return redirect(f"/incidents/{incident_id}")
+
+
+@incidents_bp.post("/incidents/<uuid:incident_id>/close")
+def close_incident(incident_id):
+    user = current_user()
+    if user is None:
+        return redirect("/login")
+
+    service = IncidentService(IncidentRepository(get_db()))
+    service.close_incident(user, incident_id)
+    return redirect(f"/incidents/{incident_id}")
