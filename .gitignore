@@ -7,7 +7,7 @@ venv/
 .env
 
 # Archivos subidos por los usuarios (adjuntos)
-uploads/
+attachments/
 
 # Caches de herramientas
 .pytest_cache/
