@@ -1,10 +1,24 @@
 from uuid import UUID
 
-from flask import jsonify, session
+from flask import Blueprint, jsonify, render_template, session
 
-from app.db.database import get_db
+from app.db.database import check_connection, get_db
 from app.repositories.user_repo import UserRepository
 from app.services.user_service import UserService
+
+main_bp = Blueprint("main", __name__)
+
+
+@main_bp.get("/")
+def index():
+    return render_template("index.html")
+
+
+@main_bp.get("/health")
+def health():
+    connected, detail = check_connection()
+    body = {"status": "ok" if connected else "error", "database": detail}
+    return jsonify(body), 200 if connected else 503
 
 
 def current_user():
