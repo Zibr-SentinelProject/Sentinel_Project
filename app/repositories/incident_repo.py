@@ -28,6 +28,8 @@ class IncidentRepository (RepositoryABC):
             id=UUID(str(row["id"])),
             user_id=UUID(str(row["user_id"])),
             analyst_id=UUID(str(analyst_id)) if analyst_id else None,
+            user_name=row.get("user_name"),
+            analyst_name=row.get("analyst_name"),
             title=row["title"],
             description=row["description"],
             severity=row["severity_id"],
