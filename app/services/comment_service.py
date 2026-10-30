@@ -11,9 +11,9 @@ class CommentService:
         self.incident_service = incident_service
 
     def add_comment(self, user: User, incident_id: UUID, content: str):
-        """Cualquier usuario logueado puede comentar en los tickets que creó."""
+        """Comentan el creador del ticket y el analista asignado en ese momento."""
         incident = self.incident_service.find_incident(incident_id)
-        if incident.user_id != user.id:
+        if not self.incident_service.can_participate(user, incident):
             raise PermissionError("You cannot comment on this incident")
 
         comment = Comment(content, user.id, incident.id)
