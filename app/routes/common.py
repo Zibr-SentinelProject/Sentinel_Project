@@ -3,7 +3,13 @@ from uuid import UUID
 from flask import Blueprint, jsonify, render_template, session
 
 from app.db.database import check_connection, get_db
+from app.repositories.attachment_repo import AttachmentRepository
+from app.repositories.comment_repo import CommentRepository
+from app.repositories.incident_repo import IncidentRepository
 from app.repositories.user_repo import UserRepository
+from app.services.attachment_service import AttachmentService
+from app.services.comment_service import CommentService
+from app.services.incident_service import IncidentService
 from app.services.user_service import UserService
 
 main_bp = Blueprint("main", __name__)
@@ -32,6 +38,17 @@ def current_user():
         # El usuario de la sesión ya no existe en la base de datos.
         session.clear()
         return None
+
+
+def get_comment_service():
+    """CommentService necesita el IncidentService para comprobar quién puede ver cada ticket."""
+    incident_service = IncidentService(IncidentRepository(get_db()))
+    return CommentService(CommentRepository(get_db()), incident_service)
+
+
+def get_attachment_service():
+    incident_service = IncidentService(IncidentRepository(get_db()))
+    return AttachmentService(AttachmentRepository(get_db()), incident_service)
 
 
 def login_error():
