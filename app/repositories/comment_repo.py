@@ -17,6 +17,7 @@ class CommentRepository (RepositoryABC):
             author_id=UUID(str(row["author_id"])),
             incident_id=UUID(str(row["incident_id"])),
             timestamp=row["timestamp"],
+            author_name=row.get("author_name"),
         )
 
     def create(self, comment: Comment):
@@ -47,8 +48,9 @@ class CommentRepository (RepositoryABC):
 
     def get_all_by_incident(self, incident_id: UUID):
         query = (
-            "SELECT id, content, author_id, incident_id, timestamp FROM comment "
-            "WHERE incident_id = %s ORDER BY timestamp"
+            "SELECT c.id, c.content, c.author_id, c.incident_id, c.timestamp, u.name AS author_name "
+            "FROM comment c INNER JOIN user u ON u.id = c.author_id "
+            "WHERE c.incident_id = %s ORDER BY c.timestamp"
         )
         with self.db_connection.cursor(DictCursor) as cursor:
             cursor.execute(query, (incident_id,))
