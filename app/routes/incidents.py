@@ -50,8 +50,9 @@ def create_incident():
     title = request.form.get("title")
     description = request.form.get("description")
     severity = int(request.form.get("severity"))
+    source_url = request.form.get("source_url")
     service = IncidentService(IncidentRepository(get_db()))
-    service.create_incident(user, title, description, severity)
+    service.create_incident(user, title, description, severity, source_url)
     return redirect("/incidents")
 
 

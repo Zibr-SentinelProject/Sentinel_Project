@@ -2,6 +2,7 @@ from uuid import UUID
 
 from app.models.incident import Incident
 from app.models.user import User
+from app.services.link_service import fetch_page_title
 
 
 class IncidentService:
@@ -9,9 +10,13 @@ class IncidentService:
     def __init__(self, incident_repo):
         self.incident_repo = incident_repo
 
-    def create_incident(self, user: User, title: str, description: str, severity: int):
-        """Lo crea cualquier usuario logueado; queda a su nombre como creador."""
+    def create_incident(self, user: User, title: str, description: str, severity: int, source_url: str = None):
+        """Lo crea cualquier usuario logueado; queda a su nombre como creador.
+        Si trae un enlace de origen, el servidor lo visita para guardar el título de la página."""
         incident = Incident(user.id, title, description, severity)
+        if source_url:
+            incident.source_url = source_url
+            incident.source_title = fetch_page_title(source_url)
         return self.incident_repo.create(incident)
 
     def list_incidents(self, user: User, title: str = None, severity: int = None, state: int = None):

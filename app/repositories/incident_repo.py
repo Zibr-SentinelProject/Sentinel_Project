@@ -30,6 +30,8 @@ class IncidentRepository (RepositoryABC):
             analyst_id=UUID(str(analyst_id)) if analyst_id else None,
             user_name=row.get("user_name"),
             analyst_name=row.get("analyst_name"),
+            source_url=row.get("source_url"),
+            source_title=row.get("source_title"),
             title=row["title"],
             description=row["description"],
             severity=row["severity_id"],
@@ -49,7 +51,7 @@ class IncidentRepository (RepositoryABC):
         """
         query = (
             "INSERT INTO incident (id, user_id, title, description, severity_id, state_id, open_date, close_date, "
-            "analyst_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            "analyst_id, source_url, source_title) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         )
         try:
             with self.db_connection.cursor() as cursor:
@@ -59,6 +61,7 @@ class IncidentRepository (RepositoryABC):
                     incident.open_date, incident.close_date,
                     # analyst_id puede ser None (todavía sin asignar), y la base de datos lo acepta como NULL.
                     incident.analyst_id,
+                    incident.source_url, incident.source_title,
                 ))
             self.db_connection.commit()
             return incident
@@ -76,7 +79,8 @@ class IncidentRepository (RepositoryABC):
         query = (
             "SELECT i.id, i.user_id, i.analyst_id, i.title, i.description, i.severity_id, s.name AS severity_name, "
             "i.state_id, st.name AS state_name, i.open_date, i.close_date, u.name AS user_name, "
-            "u.email AS user_email, a.name AS analyst_name, a.email AS analyst_email "
+            "u.email AS user_email, a.name AS analyst_name, a.email AS analyst_email, "
+            "i.source_url, i.source_title "
             "FROM incident i INNER JOIN user u ON u.id = i.user_id LEFT JOIN user a ON a.id = i.analyst_id "
             "INNER JOIN con_severity s ON s.id = i.severity_id INNER JOIN con_state st ON st.id = i.state_id "
             "ORDER BY i.open_date DESC"
@@ -103,7 +107,8 @@ class IncidentRepository (RepositoryABC):
         query = (
             "SELECT i.id, i.user_id, i.analyst_id, i.title, i.description, i.severity_id, s.name AS severity_name, "
             "i.state_id, st.name AS state_name, i.open_date, i.close_date, u.name AS user_name, "
-            "u.email AS user_email, a.name AS analyst_name, a.email AS analyst_email "
+            "u.email AS user_email, a.name AS analyst_name, a.email AS analyst_email, "
+            "i.source_url, i.source_title "
             "FROM incident i INNER JOIN user u ON u.id = i.user_id LEFT JOIN user a ON a.id = i.analyst_id "
             "INNER JOIN con_severity s ON s.id = i.severity_id INNER JOIN con_state st ON st.id = i.state_id "
             "WHERE i.id = %s"
@@ -125,7 +130,8 @@ class IncidentRepository (RepositoryABC):
         query = (
             "SELECT i.id, i.user_id, i.analyst_id, i.title, i.description, i.severity_id, s.name AS severity_name, "
             "i.state_id, st.name AS state_name, i.open_date, i.close_date, u.name AS user_name, "
-            "u.email AS user_email, a.name AS analyst_name, a.email AS analyst_email "
+            "u.email AS user_email, a.name AS analyst_name, a.email AS analyst_email, "
+            "i.source_url, i.source_title "
             "FROM incident i INNER JOIN user u ON u.id = i.user_id LEFT JOIN user a ON a.id = i.analyst_id "
             "INNER JOIN con_severity s ON s.id = i.severity_id INNER JOIN con_state st ON st.id = i.state_id "
             "WHERE i.user_id = %s ORDER BY i.open_date DESC"

@@ -18,9 +18,13 @@ class Incident:
     def __init__(self, user_id: uuid.UUID, title: str, description: str, severity: int,
                  id: uuid.UUID = None, state: int = None, open_date: datetime = None,
                  close_date: datetime = None, analyst_id: uuid.UUID = None,
-                 user_name: str = None, analyst_name: str = None):
+                 user_name: str = None, analyst_name: str = None,
+                 source_url: str = None, source_title: str = None):
         self.id = id or uuid.uuid4()
         self.user_id = user_id
+        # Enlace externo opcional y el título de la página, que obtiene el servidor al crear el ticket.
+        self.source_url = source_url
+        self.source_title = source_title
         # Nombres del creador y del analista; solo vienen rellenados cuando el repositorio hace JOIN con user.
         self.user_name = user_name
         self.analyst_name = analyst_name
