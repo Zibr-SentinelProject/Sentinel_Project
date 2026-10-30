@@ -45,7 +45,7 @@ class User:
         """Equals to ensure that we're not using the same user.
 
         Args:
-            other (object): is how we call User1 to compare it to the User2 
+            other (object): is how we call User1 to compare it to the User2
 
         Returns:
             bool: Returns True in case that User1 and User2 are equals and false in case that they're not.
@@ -68,7 +68,7 @@ class User:
             str: The user's role.
         """
         return self.ROLE
-    
+
 class Analyst(User):
     """is the subclass analyst of User
 
