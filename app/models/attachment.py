@@ -13,7 +13,7 @@ class Attachment():
         self.filename = filename
         self.filetype = filetype
         self.filesize = filesize
-        # El archivo en disco usa el id (único) y conserva la extensión; el nombre original solo se muestra.
+        # The file on disk uses the (unique) id and keeps the extension; the original name is only displayed.
         extension = os.path.splitext(filename)[1]
         self.path = self.PATHFILE + f"{self.id}{extension}"
 

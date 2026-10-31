@@ -5,7 +5,7 @@ import pymysql
 from dotenv import load_dotenv
 from flask import g
 
-# El .env está en la raíz del proyecto (app/db/database.py -> ../../.env), no en el directorio de trabajo.
+# The .env is at the project root (app/db/database.py -> ../../.env), not in the working directory.
 load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 
 

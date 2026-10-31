@@ -7,7 +7,7 @@ class Comment():
         self.id = id or uuid4()
         self.content = content
         self.author_id = author_id
-        # Solo viene rellenado cuando el repositorio lee el comentario con su autor (JOIN con user).
+        # Only filled in when the repository reads the comment together with its author (JOIN with user).
         self.author_name = author_name
         self.incident_id = incident_id
         self.timestamp = timestamp or datetime.now()

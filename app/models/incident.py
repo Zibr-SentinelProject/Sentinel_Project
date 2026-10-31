@@ -5,7 +5,7 @@ import uuid
 class Incident:
 
 
-    # Ids de las tablas con_state y con_severity (ver init.sql)
+    # Ids of the con_state and con_severity tables (see init.sql)
     OPEN = 1
     PENDING = 2
     CLOSED = 3
@@ -22,10 +22,10 @@ class Incident:
                  source_url: str = None, source_title: str = None):
         self.id = id or uuid.uuid4()
         self.user_id = user_id
-        # Enlace externo opcional y el título de la página, que obtiene el servidor al crear el ticket.
+        # Optional external link and the page title, which the server fetches when the ticket is created.
         self.source_url = source_url
         self.source_title = source_title
-        # Nombres del creador y del analista; solo vienen rellenados cuando el repositorio hace JOIN con user.
+        # Names of the creator and the analyst; only filled in when the repository does a JOIN with user.
         self.user_name = user_name
         self.analyst_name = analyst_name
         self.analyst_id = None
@@ -46,7 +46,7 @@ class Incident:
 
     @property
     def severity_key(self) -> str:
-        """Nombre en minúsculas, para la clase CSS del badge (badge-low, badge-high...)."""
+        """Lowercase name, for the badge CSS class (badge-low, badge-high...)."""
         return self.severity_name.lower()
 
     @property
