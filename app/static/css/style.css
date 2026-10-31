@@ -252,7 +252,9 @@ h3 {
   color: var(--text-soft);
 }
 
-.field input {
+.field input,
+.field textarea,
+.field select {
   width: 100%;
   padding: 0.7rem 0.9rem;
   border: 1px solid var(--border);
@@ -261,7 +263,9 @@ h3 {
   color: var(--text);
 }
 
-.field input:focus {
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
   border-color: var(--purple);
   outline: 3px solid rgba(125, 93, 168, 0.25);
 }
