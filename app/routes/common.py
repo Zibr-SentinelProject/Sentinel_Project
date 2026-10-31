@@ -28,20 +28,20 @@ def health():
 
 
 def current_user():
-    """Devuelve el usuario de la sesión, o None si no hay sesión iniciada."""
+    """Return the session user, or None if nobody is logged in."""
     user_id = session.get("user_id")
     if user_id is None:
         return None
     try:
         return UserService(UserRepository(get_db())).get_user(UUID(user_id))
     except LookupError:
-        # El usuario de la sesión ya no existe en la base de datos.
+        # The session user no longer exists in the database.
         session.clear()
         return None
 
 
 def get_comment_service():
-    """CommentService necesita el IncidentService para comprobar quién puede ver cada ticket."""
+    """CommentService needs the IncidentService to check who can view each ticket."""
     incident_service = IncidentService(IncidentRepository(get_db()))
     return CommentService(CommentRepository(get_db()), incident_service)
 
@@ -56,7 +56,7 @@ def login_error():
 
 
 def register_error_handlers(app):
-    """Los servicios lanzan excepciones; aquí las convertimos en respuestas HTTP para toda la app."""
+    """Services raise exceptions; here we turn them into HTTP responses for the whole app."""
 
     @app.errorhandler(PermissionError)
     def forbidden(error):

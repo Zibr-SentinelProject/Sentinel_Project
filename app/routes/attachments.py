@@ -14,5 +14,5 @@ def download_attachment(attachment_id):
         return redirect("/login")
 
     attachment = get_attachment_service().get_attachment(user, attachment_id)
-    # send_file resuelve rutas relativas desde la carpeta de la app, no desde donde se lanzó; por eso abspath.
+    # send_file resolves relative paths from the app folder, not from where it was launched; hence abspath.
     return send_file(os.path.abspath(attachment.path), download_name=attachment.filename)

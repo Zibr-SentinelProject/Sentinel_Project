@@ -27,7 +27,7 @@ def login():
 
     session.clear()
     session["user_id"] = str(user.id)
-    # El nombre se guarda para mostrarlo en la cabecera sin consultar la BD en cada página.
+    # The name is stored so the header can show it without querying the DB on every page.
     session["user_name"] = user.name
     return redirect("/incidents")
 
@@ -51,7 +51,7 @@ def change_password():
     try:
         UserService(UserRepository(get_db())).change_password(user, current_password, new_password)
     except ValueError as error:
-        # Se muestra en el mismo formulario, como el error del login.
+        # Shown in the same form, like the login error.
         return render_template("edit_user.html", user=user, error=str(error)), 400
     return render_template("edit_user.html", user=user, success="Contraseña actualizada")
 

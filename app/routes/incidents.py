@@ -54,7 +54,7 @@ def create_incident():
     service = IncidentService(IncidentRepository(get_db()))
     incident = service.create_incident(user, title, description, severity, source_url)
 
-    # El adjunto es opcional y solo se puede añadir aqui
+    # The attachment is optional and can only be added here
     file = request.files.get("file")
     if file is not None and file.filename:
         get_attachment_service().add_attachment(user, incident.id, file.filename, file.mimetype, file.read())
@@ -71,9 +71,9 @@ def incident_detail(incident_id):
     incident = service.get_incident(user, incident_id)
     comments = get_comment_service().list_comments(user, incident_id)
     attachments = get_attachment_service().list_attachments(user, incident_id)
-    # Solo los analistas asignan tickets, así que solo ellos necesitan la lista de analistas.
+    # Only analysts assign tickets, so only they need the list of analysts.
     analysts = UserService(UserRepository(get_db())).list_analysts() if user.is_analyst() else []
-    # Solo participan (comentar, adjuntar) el creador y el analista asignado; la regla vive en el servicio.
+    # Only the creator and the assigned analyst participate (comment, attach); the rule lives in the service.
     can_participate = service.can_participate(user, incident)
     return render_template("incident.html", user=user, incident=incident, comments=comments,
                            attachments=attachments, analysts=analysts, can_participate=can_participate)
