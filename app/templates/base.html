@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sentinel | {% block title %}{% endblock %}</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body class="{% block body_class %}{% endblock %}">
@@ -14,8 +15,13 @@
       <nav class="nav">
         {% if session.get('user_id') %}
         <a href="/incidents">Incidencias</a>
-        <a href="/password">Cambiar contraseña</a>
-        <a class="btn" href="/logout">Cerrar sesión</a>
+        <details class="user-menu">
+          <summary>{{ session.get('user_name', 'Mi cuenta') }}</summary>
+          <div class="user-menu-list">
+            <a href="/password">Cambiar contraseña</a>
+            <a href="/logout">Cerrar sesión</a>
+          </div>
+        </details>
         {% else %}
         <a class="btn" href="/login">Iniciar sesión</a>
         {% endif %}
@@ -27,7 +33,7 @@
   {% block content %}{% endblock %}
 
   {% block footer %}
-  <footer class="footer">Sentinel &middot; Wara, Yaxche &amp; Dani</footer>
+  <footer class="footer">Sentinel<span class="dot">.</span> &middot; Wara, Yaxche &amp; Dani</footer>
   {% endblock %}
 </body>
 </html>
