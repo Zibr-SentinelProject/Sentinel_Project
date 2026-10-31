@@ -17,7 +17,7 @@ class AttachmentRepository (RepositoryABC):
             filetype=row["filetype"],
             filesize=row["filesize"],
         )
-        # La ruta guardada en la BD manda: los adjuntos antiguos no siguen el formato <id>.<ext>.
+        # The path stored in the DB takes precedence: old attachments don't follow the <id>.<ext> format.
         attachment.path = row["path"]
         return attachment
 
@@ -53,17 +53,17 @@ class AttachmentRepository (RepositoryABC):
             results = cursor.fetchall()
         return [self._row_to_attachment(result) for result in results]
 
-    # Un adjunto no se edita: si hay que cambiarlo, se borra y se sube otro.
+    # An attachment is never edited: to change it, delete it and upload another one.
     def update(self, id, entity):
         raise NotImplementedError("Attachments cannot be updated.")
 
-    # Devuelve True si borró el adjunto o False si no existía.
+    # Returns True if the attachment was deleted or False if it did not exist.
     def delete(self, id: UUID):
         query = "DELETE FROM attachment WHERE id = %s"
         try:
             with self.db_connection.cursor() as cursor:
                 cursor.execute(query, (id,))
-                # rowcount = filas borradas
+                # rowcount = deleted rows
                 deleted = cursor.rowcount > 0
             self.db_connection.commit()
             return deleted

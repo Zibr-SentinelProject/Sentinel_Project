@@ -74,7 +74,7 @@ class CommentRepository (RepositoryABC):
         try:
             with self.db_connection.cursor() as cursor:
                 cursor.execute(query, (id,))
-                # rowcount = filas borradas
+                # rowcount = deleted rows
                 deleted = cursor.rowcount > 0
             self.db_connection.commit()
             return deleted

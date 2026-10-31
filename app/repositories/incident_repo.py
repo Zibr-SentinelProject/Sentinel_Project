@@ -22,7 +22,7 @@ class IncidentRepository (RepositoryABC):
         Returns:
             Incident: It return an incident object with the information of the row
         """
-        # analyst_id es NULL mientras el ticket no tenga analista asignado.
+        # analyst_id is NULL while the ticket has no assigned analyst.
         analyst_id = row["analyst_id"]
         return Incident(
             id=UUID(str(row["id"])),
@@ -59,7 +59,7 @@ class IncidentRepository (RepositoryABC):
                     incident.id, incident.user_id, incident.title, incident.description,
                     incident.severity, incident.state,
                     incident.open_date, incident.close_date,
-                    # analyst_id puede ser None (todavía sin asignar), y la base de datos lo acepta como NULL.
+                    # analyst_id can be None (not assigned yet), and the database accepts it as NULL.
                     incident.analyst_id,
                     incident.source_url, incident.source_title,
                 ))
@@ -122,10 +122,10 @@ class IncidentRepository (RepositoryABC):
         """This method is used to get all the incidents of a user
 
         Args:
-            user_id (UUID): Id del usuario creador de los tickets
+            user_id (UUID): Id of the user who created the tickets
 
         Returns:
-            incidents (List): los tickets creados por ese usuario, del más reciente al más antiguo
+            incidents (List): the tickets created by that user, from newest to oldest
         """
         query = (
             "SELECT i.id, i.user_id, i.analyst_id, i.title, i.description, i.severity_id, s.name AS severity_name, "
@@ -159,8 +159,8 @@ class IncidentRepository (RepositoryABC):
             self.db_connection.rollback()
             raise
 
-    # ID necesita la coma para ser tupla: (id,),
-    # y delete devuelve True si borró el incidente o False si no existía
+    # The id needs the comma to be a tuple: (id,),
+    # and delete returns True if the incident was deleted or False if it did not exist
     # def delete(self, id: UUID):
     #     query = "DELETE FROM incident WERE id=%s"
     #     try:
@@ -179,7 +179,7 @@ class IncidentRepository (RepositoryABC):
         try:
             with self.db_connection.cursor() as cursor:
                 cursor.execute(query, (id,))
-                # rowcount = filas borradas
+                # rowcount = deleted rows
                 deleted = cursor.rowcount > 0
             self.db_connection.commit()
             return deleted

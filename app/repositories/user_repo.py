@@ -7,7 +7,7 @@ from app.models.user import User, ROLE_CLASSES
 class UserRepository(RepositoryABC):
 
     def _row_to_user(self,row: dict) -> User:
-        # La columna role decide si devolvemos un Analyst o un Employee.
+        # The role column decides whether we return an Analyst or an Employee.
         user_class = ROLE_CLASSES[row["role"]]
         return user_class(
             id=UUID(str(row["id"])),
@@ -16,7 +16,7 @@ class UserRepository(RepositoryABC):
             password=str(row["password"])
         )
 
-    # Antes usaba fetchone, ahora usa DictCursor, lee todas las filas (fetchall) dentro del with y devuelve una lista.
+    # It used fetchone before; now it uses DictCursor, reads all the rows (fetchall) inside the with and returns a list.
     # def get_all(self):
     #     query = "SELECT id, name, email, password FROM user"
     #     try:
@@ -40,7 +40,7 @@ class UserRepository(RepositoryABC):
         return users
 
     def get_by_id(self, user_id: UUID):
-        #Le quité un =
+        # I removed a =
         # query = "SELECT id, name, email, password FROM user WHERE id == %s"
         query = "SELECT id, name, email, password, role FROM user WHERE id = %s"
         with self.db_connection.cursor(DictCursor) as cursor:
@@ -55,8 +55,8 @@ class UserRepository(RepositoryABC):
             result = cursor.fetchone()
         return self._row_to_user(result) if result else None
 
-    # Cambié el nombre del parametro a "new_user".
-    # Saqué el commit y el return del with.
+    # I renamed the parameter to "new_user".
+    # I moved the commit and the return out of the with.
     # def create(self, user: user):
     #     query = "INSERT INTO user (id, name, email, password) VALUES (%s, %s, %s, %s)"
     #     try:
@@ -84,8 +84,8 @@ class UserRepository(RepositoryABC):
             self.db_connection.rollback()
             raise
 
-    # Cambie execute() por cursor, quité un = y faltaba el commit. Además update recibe (id, entity),
-    # igual que la clase RepositoryABC.
+    # I replaced execute() with cursor, removed a = and the commit was missing. Also update receives (id, entity),
+    # like the RepositoryABC class.
     # def update(self, user: user):
     #     query = "UPDATE user SET (name = %s, email = %s, password = %s) WHERE id == %s"
     #     try:
@@ -105,7 +105,8 @@ class UserRepository(RepositoryABC):
         try:
             with self.db_connection.cursor() as cursor:
                 cursor.execute(query, (
-                    #No necesitas convertirlo a str, porque ya son str, no rompe nada, pero por si lo quieres quitar
+                    # You don't need to convert it to str, since they are already str;
+                    # it breaks nothing, but in case you want to remove it
                     str(updated_user.name),
                     str(updated_user.email),
                     str(updated_user.password),
@@ -118,8 +119,8 @@ class UserRepository(RepositoryABC):
             self.db_connection.rollback()
             raise
 
-    # Daba error, se necesitaba la coma: (id,).
-    # Ahora devuelve True si borró el usuario o False si no existía.
+    # It raised an error, the comma was needed: (id,).
+    # Now it returns True if the user was deleted or False if it did not exist.
     # def delete(self, id):
     #     query = "DELETE FROM user WHERE id == %s"
     #     try:
@@ -136,7 +137,7 @@ class UserRepository(RepositoryABC):
         try:
             with self.db_connection.cursor() as cursor:
                 cursor.execute(query, (id,))
-                # rowcount = filas borradas; se lee dentro del with, antes de que se cierre el cursor.
+                # rowcount = deleted rows; read inside the with, before the cursor is closed.
                 deleted = cursor.rowcount > 0
             self.db_connection.commit()
             return deleted
