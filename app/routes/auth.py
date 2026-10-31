@@ -27,6 +27,8 @@ def login():
 
     session.clear()
     session["user_id"] = str(user.id)
+    # El nombre se guarda para mostrarlo en la cabecera sin consultar la BD en cada página.
+    session["user_name"] = user.name
     return redirect("/incidents")
 
 

@@ -34,7 +34,7 @@
       {% if incidents %}
       <table class="table">
         <thead>
-          <tr><th>Título</th><th>Severidad</th><th>Estado</th><th>Abierta</th></tr>
+          <tr><th>Título</th><th>Severidad</th><th>Estado</th><th>Analista</th><th>Abierta</th></tr>
         </thead>
         <tbody>
           {% for incident in incidents %}
@@ -42,6 +42,7 @@
             <td><a href="/incidents/{{ incident.id }}">{{ incident.title }}</a></td>
             <td><span class="badge badge-{{ incident.severity_key }}">{{ incident.severity_name }}</span></td>
             <td>{{ incident.state_name }}</td>
+            <td>{{ incident.analyst_name or 'Sin asignar' }}</td>
             <td>{{ incident.open_date }}</td>
           </tr>
           {% endfor %}

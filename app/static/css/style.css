@@ -348,7 +348,7 @@ h3 {
 .field select:focus,
 .filters input:focus,
 .filters select:focus {
-  background: var(--surface);
+  background-color: var(--surface);
   border-color: var(--purple);
   outline: 3px solid rgba(125, 93, 168, 0.25);
 }
@@ -369,6 +369,18 @@ h3 {
 
 .filters select {
   width: auto;
+}
+
+/* desplegables: sin el aspecto nativo, con una flecha propia para que se vean igual que los campos de texto */
+.field select,
+.filters select {
+  appearance: none;
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237d5da8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  background-size: 1rem;
+  cursor: pointer;
 }
 
 /* formulario de nueva incidencia */
