@@ -8,7 +8,7 @@
     <div class="container">
       <h1>Nueva incidencia</h1>
 
-      <form method="post" action="/incidents/new">
+      <form method="post" action="/incidents/new" enctype="multipart/form-data">
         <div class="field">
           <label for="title">Título</label>
           <input type="text" id="title" name="title">
@@ -29,6 +29,10 @@
         <div class="field">
           <label for="source_url">Enlace de origen (opcional)</label>
           <input type="text" id="source_url" name="source_url" placeholder="https://...">
+        </div>
+        <div class="field">
+          <label for="file">Adjunto (opcional, solo se puede añadir ahora)</label>
+          <input type="file" id="file" name="file">
         </div>
         <button class="btn" type="submit">Crear incidencia</button>
         <a href="/incidents">Cancelar</a>
