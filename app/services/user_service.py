@@ -15,11 +15,11 @@ class UserService:
         return user
 
     def list_analysts(self):
-        """Los usuarios a los que se puede asignar un ticket."""
+        """Users a ticket can be assigned to."""
         return [user for user in self.user_repo.get_all() if user.is_analyst()]
 
     def create_user(self, person: User, name: str, email: str, password: str, role: str):
-        """Solo un analista puede crear usuarios y elegir su rol."""
+        """Only an analyst can create users and choose their role."""
         if not person.is_analyst():
             raise PermissionError("Only analysts can create users")
         if role not in ROLE_CLASSES:
@@ -32,7 +32,7 @@ class UserService:
         return self.user_repo.create(new_user)
 
     def change_password(self, user: User, current_password: str, new_password: str):
-        """Cada usuario cambia su propia contraseña, confirmando primero la actual."""
+        """Each user changes their own password, confirming the current one first."""
         if user.password != current_password:
             raise ValueError("Current password is incorrect")
         if not new_password:
@@ -42,7 +42,7 @@ class UserService:
         return self.user_repo.update(user.id, user)
 
     def authenticate(self, email: str, password: str):
-        """Devuelve el usuario si el email y la contraseña coinciden; si no, None."""
+        """Return the user if the email and password match; otherwise None."""
         user = self.user_repo.get_by_email(email)
         if user is None or user.password != password:
             return None

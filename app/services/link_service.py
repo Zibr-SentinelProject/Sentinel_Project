@@ -2,7 +2,7 @@ from urllib.request import Request, urlopen
 
 DEFAULT_TITLE = "No title"
 
-# Algunas webs (WAF) rechazan con 406 al user-agent por defecto de Python, así que imitamos un navegador.
+# Some sites (WAF) reject Python's default user-agent with a 406, so we imitate a browser.
 BROWSER_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
                   "(KHTML, like Gecko) Chrome/126.0 Safari/537.36",
@@ -12,7 +12,7 @@ BROWSER_HEADERS = {
 
 
 def fetch_page_title(url: str):
-    """El servidor descarga la pgina y devuelve su <title>"""
+    """The server downloads the page and returns its <title>"""
     try:
         with urlopen(Request(url, headers=BROWSER_HEADERS), timeout=5) as response:
             html = response.read(100_000).decode("utf-8", errors="ignore")
@@ -25,8 +25,8 @@ def fetch_page_title(url: str):
     if open_tag == -1 or close_tag == -1:
         return DEFAULT_TITLE
 
-    # La etiqueta de apertura puede traer saltos de línea o atributos, así que el texto empieza tras su ">".
+    # The opening tag may contain line breaks or attributes, so the text starts after its ">".
     text_start = html.find(">", open_tag) + 1
     title = html[text_start:close_tag]
-    # split/join quita los saltos de línea y espacios repetidos de dentro del título.
+    # split/join removes line breaks and repeated spaces inside the title.
     return " ".join(title.split())[:255] or DEFAULT_TITLE
