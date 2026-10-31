@@ -14,7 +14,7 @@ from app.routes.users import users_bp
 def create_app():
     """Create and configure the Flask app."""
     app = Flask(__name__)
-    # La sesión del login va firmada con esta clave; sin ella Flask no puede guardar la sesión.
+    # The login session is signed with this key; without it Flask cannot store the session.
     app.secret_key = os.getenv("SECRET_KEY")
     init_db(app)
     register_error_handlers(app)
