@@ -9,12 +9,6 @@
   ("high", "Alta", "Afecta a una función importante."),
   ("critical", "Crítica", "Servicio caído, atención inmediata."),
 ] %}
-{% set latest = [
-  ("No carga el panel", "critical", "Crítica", "Abierta"),
-  ("Error al exportar informe", "high", "Alta", "Pendiente"),
-  ("Texto cortado en móvil", "medium", "Media", "Pendiente"),
-  ("Cambiar logo del pie", "low", "Baja", "Cerrada"),
-] %}
 
 <main>
   <section class="hero">
@@ -40,20 +34,5 @@
     </div>
   </section>
 
-  <section class="section">
-    <div class="container">
-      <h2>Últimas incidencias</h2>
-      <table class="table">
-        <thead>
-          <tr><th>Título</th><th>Severidad</th><th>Estado</th></tr>
-        </thead>
-        <tbody>
-          {% for title, key, name, state in latest %}
-          <tr><td>{{ title }}</td><td><span class="badge badge-{{ key }}">{{ name }}</span></td><td>{{ state }}</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </section>
 </main>
 {% endblock %}

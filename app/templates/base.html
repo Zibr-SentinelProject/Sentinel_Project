@@ -12,8 +12,13 @@
     <div class="container">
       <a class="brand" href="/">Sentinel<span>.</span></a>
       <nav class="nav">
+        {% if session.get('user_id') %}
         <a href="/incidents">Incidencias</a>
+        <a href="/password">Cambiar contraseña</a>
+        <a class="btn" href="/logout">Cerrar sesión</a>
+        {% else %}
         <a class="btn" href="/login">Iniciar sesión</a>
+        {% endif %}
       </nav>
     </div>
   </header>

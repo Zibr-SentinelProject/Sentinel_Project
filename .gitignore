@@ -6,6 +6,9 @@ __pycache__/
 venv/
 .env
 
+# Dockerfile local para pruebas
+Dockerfile
+
 # Archivos subidos por los usuarios (adjuntos)
 attachments/
 
