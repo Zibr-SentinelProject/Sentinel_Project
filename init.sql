@@ -33,6 +33,8 @@ CREATE TABLE IF NOT EXISTS incident (
     state_id    INT(1) NOT NULL DEFAULT 1,
     open_date   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     close_date  DATETIME NULL,
+    source_url   VARCHAR(500) NULL,
+    source_title VARCHAR(255) NULL,
     CONSTRAINT fk_incidents_user FOREIGN KEY (user_id) REFERENCES user (id),
     CONSTRAINT fk_incidents_analyst FOREIGN KEY (analyst_id) REFERENCES user (id),
     CONSTRAINT fk_incidents_severity FOREIGN KEY (severity_id) REFERENCES con_severity (id),
