@@ -67,6 +67,6 @@ VALUES (1, 'LOW'), (2, 'MEDIUM'), (3, 'HIGH'), (4, 'CRITICAL');
 INSERT IGNORE INTO con_state (id, name)
 VALUES (1, 'OPEN'), (2, 'PENDING'), (3, 'CLOSED');
 
--- Primer analista: sin él nadie podría crear usuarios (solo un analista puede). Contraseña en texto plano a propósito.
+-- First analyst: without it nobody could create users (only an analyst can). Plain-text password on purpose.
 INSERT IGNORE INTO user (name, email, password, role)
 VALUES ('Analista Inicial', 'analyst@sentinel.local', 'analyst123', 'ANALYST');

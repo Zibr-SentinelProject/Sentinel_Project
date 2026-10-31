@@ -49,7 +49,7 @@
       </form>
 
       <script>
-        // Muestra el nombre del archivo elegido en la zona de carga.
+        // Shows the name of the chosen file in the upload area.
         document.getElementById("file").addEventListener("change", function () {
           document.getElementById("file-name").textContent = this.files.length ? this.files[0].name : "Haz clic para elegir un archivo";
         });

@@ -76,7 +76,7 @@
           <section class="card">
             <h2>Gestión del ticket</h2>
 
-            {# Asigna cualquier analista si no hay asignado; si ya hay, solo el asignado (puede pasarlo a otro). #}
+            {# Any analyst can assign if none is assigned; if there is one, only the assigned analyst (who can pass it on to another). #}
             {% if user.is_analyst() and not incident.is_closed() and (incident.analyst_id is none or incident.analyst_id == user.id) %}
             <form method="post" action="/incidents/{{ incident.id }}/assign">
               <div class="field">

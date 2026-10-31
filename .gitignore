@@ -1,20 +1,20 @@
 __pycache__/
 *.pyc
 
-# Entornos virtuales y variables de entorno (.env guarda SECRET_KEY)
+# Virtual environments and environment variables (.env holds SECRET_KEY)
 .venv/
 venv/
 .env
 
-# Dockerfile local para pruebas
+# Local Dockerfile for testing
 Dockerfile
 
-# Archivos subidos por los usuarios (adjuntos)
+# Files uploaded by users (attachments)
 attachments/
 
-# Caches de herramientas
+# Tool caches
 .pytest_cache/
 
-# Sistema operativo e IDE
+# Operating system and IDE
 .DS_Store
 .idea/
