@@ -6,7 +6,30 @@
 <main>
   <section class="section">
     <div class="container">
-      <h1>Incidencias de {{ user.name }}</h1>
+      <h1>Incidencias</h1>
+      <p>
+        <a class="btn" href="/incidents/new">Nueva incidencia</a>
+        {% if user.is_analyst() %}<a class="btn" href="/users/new">Nuevo usuario</a>{% endif %}
+      </p>
+
+      <form method="get" action="/incidents">
+        <input type="text" name="title" placeholder="Buscar por título" value="{{ title or '' }}">
+        <select name="severity">
+          <option value="">Toda severidad</option>
+          <option value="1" {{ 'selected' if severity == '1' }}>Baja</option>
+          <option value="2" {{ 'selected' if severity == '2' }}>Media</option>
+          <option value="3" {{ 'selected' if severity == '3' }}>Alta</option>
+          <option value="4" {{ 'selected' if severity == '4' }}>Crítica</option>
+        </select>
+        <select name="state">
+          <option value="">Todo estado</option>
+          <option value="1" {{ 'selected' if state == '1' }}>Abierta</option>
+          <option value="2" {{ 'selected' if state == '2' }}>Pendiente</option>
+          <option value="3" {{ 'selected' if state == '3' }}>Cerrada</option>
+        </select>
+        <button class="btn" type="submit">Buscar</button>
+        <a href="/incidents">Limpiar</a>
+      </form>
 
       {% if incidents %}
       <table class="table">
@@ -16,7 +39,7 @@
         <tbody>
           {% for incident in incidents %}
           <tr>
-            <td>{{ incident.title }}</td>
+            <td><a href="/incidents/{{ incident.id }}">{{ incident.title }}</a></td>
             <td><span class="badge badge-{{ incident.severity_key }}">{{ incident.severity_name }}</span></td>
             <td>{{ incident.state_name }}</td>
             <td>{{ incident.open_date }}</td>
@@ -25,7 +48,7 @@
         </tbody>
       </table>
       {% else %}
-      <p>No hay incidencias todavía.</p>
+      <p>No hay incidencias que mostrar.</p>
       {% endif %}
     </div>
   </section>

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva incidencia{% endblock %}
+
+{% block content %}
+<main>
+  <section class="section">
+    <div class="container">
+      <h1>Nueva incidencia</h1>
+
+      <form method="post" action="/incidents/new">
+        <div class="field">
+          <label for="title">Título</label>
+          <input type="text" id="title" name="title">
+        </div>
+        <div class="field">
+          <label for="description">Descripción</label>
+          <textarea id="description" name="description" rows="5"></textarea>
+        </div>
+        <div class="field">
+          <label for="severity">Severidad</label>
+          <select id="severity" name="severity">
+            <option value="1">Baja</option>
+            <option value="2" selected>Media</option>
+            <option value="3">Alta</option>
+            <option value="4">Crítica</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="source_url">Enlace de origen (opcional)</label>
+          <input type="text" id="source_url" name="source_url" placeholder="https://...">
+        </div>
+        <button class="btn" type="submit">Crear incidencia</button>
+        <a href="/incidents">Cancelar</a>
+      </form>
+    </div>
+  </section>
+</main>
+{% endblock %}
