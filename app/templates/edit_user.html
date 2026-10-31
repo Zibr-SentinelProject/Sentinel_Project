@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Cambiar contraseña{% endblock %}
+
+{% block content %}
+<main>
+  <section class="section">
+    <div class="container">
+      <h1>Cambiar contraseña</h1>
+
+      {% if error %}
+      <div class="alert alert-error" role="alert">{{ error }}</div>
+      {% endif %}
+      {% if success %}
+      <div class="alert alert-success" role="status">{{ success }}</div>
+      {% endif %}
+
+      <form method="post" action="/password">
+        <div class="field">
+          <label for="current_password">Contraseña actual</label>
+          <input type="password" id="current_password" name="current_password" autocomplete="current-password">
+        </div>
+        <div class="field">
+          <label for="new_password">Contraseña nueva</label>
+          <input type="password" id="new_password" name="new_password" autocomplete="new-password">
+        </div>
+        <button class="btn" type="submit">Actualizar</button>
+        <a href="/incidents">Volver</a>
+      </form>
+    </div>
+  </section>
+</main>
+{% endblock %}

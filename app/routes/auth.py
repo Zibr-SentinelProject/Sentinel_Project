@@ -35,7 +35,7 @@ def password_page():
     user = current_user()
     if user is None:
         return redirect("/login")
-    return render_template("password.html", user=user)
+    return render_template("edit_user.html", user=user)
 
 
 @auth_bp.post("/password")
@@ -50,8 +50,8 @@ def change_password():
         UserService(UserRepository(get_db())).change_password(user, current_password, new_password)
     except ValueError as error:
         # Se muestra en el mismo formulario, como el error del login.
-        return render_template("password.html", user=user, error=str(error)), 400
-    return render_template("password.html", user=user, success="Contraseña actualizada")
+        return render_template("edit_user.html", user=user, error=str(error)), 400
+    return render_template("edit_user.html", user=user, success="Contraseña actualizada")
 
 
 @auth_bp.get("/logout")
