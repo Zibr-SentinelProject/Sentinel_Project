@@ -6,37 +6,54 @@
 <main>
   <section class="section">
     <div class="container">
-      <h1>Nueva incidencia</h1>
+      <p class="breadcrumb"><a href="/incidents">Incidencias</a> / <span>Nueva incidencia</span></p>
+      <h1>Reportar nueva incidencia</h1>
+      <p class="page-subtitle">Completa el contexto del problema para iniciar el triaje.</p>
 
-      <form method="post" action="/incidents/new" enctype="multipart/form-data">
+      <form class="card form-card" method="post" action="/incidents/new" enctype="multipart/form-data">
         <div class="field">
-          <label for="title">Título</label>
-          <input type="text" id="title" name="title">
+          <label for="title">Título <span class="required">*</span></label>
+          <input type="text" id="title" name="title" required
+                 placeholder="ej. Fallo recurrente 504 en /v1/checkout">
         </div>
         <div class="field">
-          <label for="description">Descripción</label>
-          <textarea id="description" name="description" rows="5"></textarea>
+          <label for="description">Descripción <span class="required">*</span></label>
+          <textarea id="description" name="description" rows="6" required
+                    placeholder="Describe el problema, los pasos para reproducirlo o el contexto técnico relevante..."></textarea>
+        </div>
+        <fieldset class="severity">
+          <legend>Severidad <span class="required">*</span></legend>
+          <div class="pills">
+            <label class="pill pill-low"><input type="radio" name="severity" value="1"><span>Baja</span></label>
+            <label class="pill pill-medium"><input type="radio" name="severity" value="2" checked><span>Media</span></label>
+            <label class="pill pill-high"><input type="radio" name="severity" value="3"><span>Alta</span></label>
+            <label class="pill pill-critical"><input type="radio" name="severity" value="4"><span>Crítica</span></label>
+          </div>
+        </fieldset>
+        <div class="field">
+          <label for="source_url">Enlace de origen <span class="optional">(opcional)</span></label>
+          <input type="url" id="source_url" name="source_url" placeholder="https://...">
+          <p class="hint">El servidor guardará automáticamente el título de la página al crear la incidencia.</p>
         </div>
         <div class="field">
-          <label for="severity">Severidad</label>
-          <select id="severity" name="severity">
-            <option value="1">Baja</option>
-            <option value="2" selected>Media</option>
-            <option value="3">Alta</option>
-            <option value="4">Crítica</option>
-          </select>
+          <label for="file">Adjunto <span class="optional">(opcional, solo se puede añadir ahora)</span></label>
+          <label class="dropzone" for="file">
+            <span id="file-name">Haz clic para elegir un archivo</span>
+            <input type="file" id="file" name="file">
+          </label>
         </div>
-        <div class="field">
-          <label for="source_url">Enlace de origen (opcional)</label>
-          <input type="text" id="source_url" name="source_url" placeholder="https://...">
+        <div class="form-actions">
+          <a href="/incidents">Cancelar</a>
+          <button class="btn" type="submit">Crear incidencia</button>
         </div>
-        <div class="field">
-          <label for="file">Adjunto (opcional, solo se puede añadir ahora)</label>
-          <input type="file" id="file" name="file">
-        </div>
-        <button class="btn" type="submit">Crear incidencia</button>
-        <a href="/incidents">Cancelar</a>
       </form>
+
+      <script>
+        // Muestra el nombre del archivo elegido en la zona de carga.
+        document.getElementById("file").addEventListener("change", function () {
+          document.getElementById("file-name").textContent = this.files.length ? this.files[0].name : "Haz clic para elegir un archivo";
+        });
+      </script>
     </div>
   </section>
 </main>
