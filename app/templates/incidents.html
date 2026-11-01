@@ -9,7 +9,7 @@
       <h1>Incidencias</h1>
       <p>
         <a class="btn" href="/incidents/new">Nueva incidencia</a>
-        {% if user.is_analyst() %}<a class="btn" href="/users/new">Nuevo usuario</a>{% endif %}
+        {% if user.is_analyst() %}<a class="btn" href="/users/new">Nuevo usuario</a> <a class="btn" href="/users">Usuarios</a>{% endif %}
       </p>
 
       <form class="filters" method="get" action="/incidents">

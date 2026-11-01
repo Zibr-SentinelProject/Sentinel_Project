@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Registro{% endblock %}
+
+{% block body_class %}auth{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block content %}
+<main class="card">
+  <h1>Sentinel<span class="dot">.</span></h1>
+  <p class="subtitle">Crea tu cuenta para reportar incidencias</p>
+
+  {% if error %}
+  <div class="alert alert-error" role="alert">{{ error }}</div>
+  {% endif %}
+
+  <form method="post" action="/register">
+    <div class="field">
+      <label for="name">Nombre</label>
+      <input type="text" id="name" name="name" autocomplete="name" required>
+    </div>
+    <div class="field">
+      <label for="email">Correo electrónico</label>
+      <input type="email" id="email" name="email" autocomplete="email" required>
+    </div>
+    <div class="field">
+      <label for="password">Contraseña</label>
+      <input type="password" id="password" name="password" autocomplete="new-password" required>
+    </div>
+    <button class="btn btn-block" type="submit">Registrarme</button>
+  </form>
+
+  <p class="foot"><a href="/login">Ya tengo cuenta</a></p>
+</main>
+{% endblock %}
