@@ -21,8 +21,7 @@ class UserService:
     def register(self, name: str, email: str, password: str):
         """Anyone can register, but the account is always an employee.
         Only an analyst can give the analyst role (see create_user)."""
-        if self.user_repo.get_by_email(email) is not None:
-            raise ValueError("Email already registered")
+        self._check_email_is_free(email)
 
         new_user = Employee(name, email, password)
         return self.user_repo.create(new_user)
@@ -33,8 +32,7 @@ class UserService:
             raise PermissionError("Only analysts can create users")
         if role not in ROLE_CLASSES:
             raise ValueError("Invalid role")
-        if self.user_repo.get_by_email(email) is not None:
-            raise ValueError("Email already registered")
+        self._check_email_is_free(email)
 
         user_class = ROLE_CLASSES[role]
         new_user = user_class(name, email, password)
@@ -72,3 +70,8 @@ class UserService:
         if user is None or user.password != password:
             return None
         return user
+
+    def _check_email_is_free(self, email: str):
+        """Two accounts cannot share an email (used by register and create_user)."""
+        if self.user_repo.get_by_email(email) is not None:
+            raise ValueError("Email already registered")
