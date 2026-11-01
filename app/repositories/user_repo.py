@@ -119,6 +119,17 @@ class UserRepository(RepositoryABC):
             self.db_connection.rollback()
             raise
 
+    def update_role(self, id: UUID, role: str):
+        query = "UPDATE user SET role = %s WHERE id = %s"
+        try:
+            with self.db_connection.cursor() as cursor:
+                cursor.execute(query, (role, id))
+            self.db_connection.commit()
+        except MySQLError as e:
+            print(f"Error updating role: {e}")
+            self.db_connection.rollback()
+            raise
+
     # It raised an error, the comma was needed: (id,).
     # Now it returns True if the user was deleted or False if it did not exist.
     # def delete(self, id):

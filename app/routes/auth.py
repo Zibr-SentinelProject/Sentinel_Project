@@ -1,9 +1,7 @@
 from flask import Blueprint, redirect, render_template, request, session
 
-from app.db.database import get_db
-from app.repositories.user_repo import UserRepository
 from app.routes.common import current_user
-from app.services.user_service import UserService
+from app.services.factory import get_user_service
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -20,7 +18,7 @@ def login():
     if not email or not password:
         return render_template("login.html", error="Email and password are required"), 400
 
-    service = UserService(UserRepository(get_db()))
+    service = get_user_service()
     user = service.authenticate(email, password)
     if user is None:
         return render_template("login.html", error="Invalid email or password"), 401
@@ -28,6 +26,32 @@ def login():
     session.clear()
     session["user_id"] = str(user.id)
     # The name is stored so the header can show it without querying the DB on every page.
+    session["user_name"] = user.name
+    return redirect("/incidents")
+
+
+@auth_bp.get("/register")
+def register_page():
+    return render_template("register.html")
+
+
+@auth_bp.post("/register")
+def register():
+    name = request.form.get("name")
+    email = request.form.get("email")
+    password = request.form.get("password")
+    if not name or not email or not password:
+        return render_template("register.html", error="Name, email and password are required"), 400
+
+    service = get_user_service()
+    try:
+        user = service.register(name, email, password)
+    except ValueError as error:
+        return render_template("register.html", error=str(error)), 400
+
+    # The new employee is logged in right away, the same way as in login.
+    session.clear()
+    session["user_id"] = str(user.id)
     session["user_name"] = user.name
     return redirect("/incidents")
 
@@ -49,7 +73,7 @@ def change_password():
     current_password = request.form.get("current_password")
     new_password = request.form.get("new_password")
     try:
-        UserService(UserRepository(get_db())).change_password(user, current_password, new_password)
+        get_user_service().change_password(user, current_password, new_password)
     except ValueError as error:
         # Shown in the same form, like the login error.
         return render_template("edit_user.html", user=user, error=str(error)), 400

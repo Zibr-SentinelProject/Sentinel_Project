@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Usuarios{% endblock %}
+
+{% block content %}
+<main>
+  <section class="section">
+    <div class="container">
+      <h1>Usuarios</h1>
+      <p><a class="btn" href="/users/new">Nuevo usuario</a></p>
+
+      <table class="table">
+        <thead>
+          <tr><th>Nombre</th><th>Correo</th><th>Rol</th></tr>
+        </thead>
+        <tbody>
+          {% for listed in users %}
+          <tr>
+            <td>{{ listed.name }}</td>
+            <td>{{ listed.email }}</td>
+            <td>
+              <form method="post" action="/users/{{ listed.id }}/role">
+                <select name="role">
+                  {% for role in roles %}
+                  <option value="{{ role }}" {{ 'selected' if listed.get_role() == role }}>{{ role }}</option>
+                  {% endfor %}
+                </select>
+                <button class="btn" type="submit">Guardar</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+{% endblock %}
