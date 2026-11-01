@@ -3,9 +3,7 @@ from uuid import UUID, uuid4
 
 class Attachment():
 
-    MAX_FILE_SIZE_MB = 5
     PATHFILE = "attachments/"
-    ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "application/pdf"]
 
     def __init__(self, incident_id: UUID, filename: str, filetype: str, filesize: int, id: UUID = None,
                  path: str = None):
@@ -23,14 +21,19 @@ class Attachment():
     def path(self) -> str:
         return self._path
 
-    def is_valid_filetype(self)-> bool:
-        return self.filetype in self.ALLOWED_FILE_TYPES
+    def save_file(self, content: bytes):
+        """Writes the content to disk."""
+        os.makedirs(self.PATHFILE, exist_ok=True)
+        # "xb": fails if the file already exists, so another attachment is never overwritten.
+        with open(self.path, "xb") as file:
+            file.write(content)
 
-    def is_valid_filesize(self) -> bool:
-        return self.filesize <= self.MAX_FILE_SIZE_MB * 1024 * 1024
-
-    def is_valid(self) -> bool:
-        return self.is_valid_filetype() and self.is_valid_filesize()
+    def remove_file(self):
+        """Deletes the file from disk. If it is already gone, there is nothing to clean up."""
+        try:
+            os.remove(self.path)
+        except FileNotFoundError:
+            pass
 
     def __repr__(self):
         return f"<Attachment(filename={self.filename}, filetype={self.filetype}, filesize={self.filesize})>"

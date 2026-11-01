@@ -4,7 +4,6 @@ from flask import Blueprint, make_response, redirect, render_template, request
 
 from app.routes.common import current_user
 from app.services.factory import (
-    get_attachment_service,
     get_comment_service,
     get_incident_service,
     get_user_service,
@@ -64,12 +63,14 @@ def create_incident():
     severity = int(request.form.get("severity"))
     source_url = request.form.get("source_url")
     service = get_incident_service()
-    incident = service.create_incident(user, title, description, severity, source_url)
 
-    # The attachment is optional and can only be added here
+    # The attachment is optional and can only be added here, together with the ticket.
     file = request.files.get("file")
     if file is not None and file.filename:
-        get_attachment_service().add_attachment(user, incident.id, file.filename, file.mimetype, file.read())
+        service.create_incident(user, title, description, severity, source_url,
+                                file.filename, file.mimetype, file.read())
+    else:
+        service.create_incident(user, title, description, severity, source_url)
     return redirect("/incidents")
 
 
@@ -82,13 +83,12 @@ def incident_detail(incident_id):
     service = get_incident_service()
     incident = service.get_incident(user, incident_id)
     comments = get_comment_service().list_comments(user, incident_id)
-    attachments = get_attachment_service().list_attachments(user, incident_id)
     # Only analysts assign tickets, so only they need the list of analysts.
     analysts = get_user_service().list_analysts() if user.is_analyst() else []
-    # Only the creator and the assigned analyst participate (comment, attach); the rule lives in the service.
+    # Only the creator and the assigned analyst participate (comment); the rule lives in the service.
     can_participate = service.can_participate(user, incident)
     return render_template("incident.html", user=user, incident=incident, comments=comments,
-                           attachments=attachments, analysts=analysts, can_participate=can_participate)
+                           analysts=analysts, can_participate=can_participate)
 
 
 @incidents_bp.post("/incidents/<uuid:incident_id>/assign")

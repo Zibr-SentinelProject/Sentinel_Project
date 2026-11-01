@@ -4,6 +4,7 @@ from pymysql import MySQLError
 from pymysql.cursors import DictCursor
 
 from app.repositories.abc_repo import RepositoryABC
+from app.models.attachment import Attachment
 from app.models.incident import Incident
 
 class IncidentRepository (RepositoryABC):
@@ -63,6 +64,15 @@ class IncidentRepository (RepositoryABC):
                     incident.analyst_id,
                     incident.source_url, incident.source_title,
                 ))
+                # The attachment goes in the same transaction: either both rows are saved or none.
+                if incident.attachment:
+                    attachment = incident.attachment
+                    cursor.execute(
+                        "INSERT INTO attachment (id, incident_id, filename, filetype, filesize, path) "
+                        "VALUES (%s, %s, %s, %s, %s, %s)",
+                        (attachment.id, incident.id, attachment.filename,
+                         attachment.filetype, attachment.filesize, attachment.path),
+                    )
             self.db_connection.commit()
             return incident
         except MySQLError as e:
@@ -116,7 +126,30 @@ class IncidentRepository (RepositoryABC):
         with self.db_connection.cursor(DictCursor) as cursor:
             cursor.execute(query, (incident_id,))
             result = cursor.fetchone()
-        return self._row_to_incident(result) if result else None
+        if result is None:
+            return None
+
+        incident = self._row_to_incident(result)
+        incident.attachment = self._get_attachment(incident.id)
+        return incident
+
+    def _get_attachment(self, incident_id: UUID):
+        """The attachment of the incident, or None if it has none (there is at most one)."""
+        query = "SELECT id, incident_id, filename, filetype, filesize, path FROM attachment WHERE incident_id = %s"
+        with self.db_connection.cursor(DictCursor) as cursor:
+            cursor.execute(query, (incident_id,))
+            row = cursor.fetchone()
+        if row is None:
+            return None
+        return Attachment(
+            id=UUID(str(row["id"])),
+            incident_id=UUID(str(row["incident_id"])),
+            filename=row["filename"],
+            filetype=row["filetype"],
+            filesize=row["filesize"],
+            # The stored path takes precedence: old attachments don't follow the <id>.<ext> format.
+            path=row["path"],
+        )
 
     def get_by_user(self, user_id: UUID):
         """This method is used to get all the incidents of a user
@@ -159,21 +192,6 @@ class IncidentRepository (RepositoryABC):
             self.db_connection.rollback()
             raise
 
-    # The id needs the comma to be a tuple: (id,),
-    # and delete returns True if the incident was deleted or False if it did not exist
-    # def delete(self, id: UUID):
-    #     query = "DELETE FROM incident WERE id=%s"
-    #     try:
-    #         with self.db_connection.cursor() as cursor:
-    #             cursor.execute(query, (
-    #                 id
-    #             ))
-    #         self.db_connection.commit()
-    #         return incident
-    #     except pymysql.MySQLError as e:
-    #         print(f"Error deleting incident: {e}")
-    #         self.db_connection.rollback()
-    #         raise
     def delete(self, id: UUID):
         query = "DELETE FROM incident WHERE id = %s"
         try:

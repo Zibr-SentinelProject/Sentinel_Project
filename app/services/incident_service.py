@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from app.models.attachment import Attachment
 from app.models.incident import Incident
 from app.models.user import User
 from app.services.link_service import fetch_page_title
@@ -10,14 +11,26 @@ class IncidentService:
     def __init__(self, incident_repo):
         self.incident_repo = incident_repo
 
-    def create_incident(self, user: User, title: str, description: str, severity: int, source_url: str = None):
+    def create_incident(self, user: User, title: str, description: str, severity: int, source_url: str = None,
+                        filename: str = None, filetype: str = None, content: bytes = None):
         """Any logged-in user can create it; it is registered under their name as the creator.
-        If it has a source link, the server visits it to store the page title."""
+        If it has a source link, the server visits it to store the page title.
+        If it comes with a file, it is saved together with the ticket (the only moment a file can be attached)."""
         incident = Incident(user.id, title, description, severity)
         if source_url:
             incident.source_url = source_url
             incident.source_title = fetch_page_title(source_url)
-        return self.incident_repo.create(incident)
+        if filename:
+            incident.attachment = Attachment(incident.id, filename, filetype, len(content))
+            incident.attachment.save_file(content)
+
+        try:
+            return self.incident_repo.create(incident)
+        except Exception:
+            # If the ticket could not be saved, we don't leave the file orphaned.
+            if incident.attachment:
+                incident.attachment.remove_file()
+            raise
 
     def list_incidents(self, user: User, title: str = None, severity: int = None, state: int = None):
         """Analysts see all tickets; employees only their own. Filters by title, severity and state."""

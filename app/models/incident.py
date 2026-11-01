@@ -19,9 +19,11 @@ class Incident:
                  id: uuid.UUID = None, state: int = None, open_date: datetime = None,
                  close_date: datetime = None, analyst_id: uuid.UUID = None,
                  user_name: str = None, analyst_name: str = None,
-                 source_url: str = None, source_title: str = None):
+                 source_url: str = None, source_title: str = None, attachment=None):
         self.id = id or uuid.uuid4()
         self.user_id = user_id
+        # Optional file that is saved together with the ticket when it is created (one per incident).
+        self.attachment = attachment
         # Optional external link and the page title, which the server fetches when the ticket is created.
         self.source_url = source_url
         self.source_title = source_title
