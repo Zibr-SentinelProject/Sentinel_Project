@@ -7,8 +7,8 @@
   <section class="section">
     <div class="container">
       <div class="detail-top">
-        <p class="breadcrumb"><a href="/incidents">Incidencias</a> / <span>{{ incident.id }}</span></p>
-        <a href="/incidents">&larr; Volver al listado</a>
+        <p class="breadcrumb"><a href="/incidents">Incidents</a> / <span>{{ incident.id }}</span></p>
+        <a href="/incidents">&larr; Back to list</a>
       </div>
 
       <div class="detail-layout">
@@ -23,25 +23,25 @@
             {% if incident.source_url %}
             <div class="source-card">
               <div>
-                <small>Origen externo</small>
+                <small>External source</small>
                 <strong>{{ incident.source_title or incident.source_url }}</strong>
               </div>
-              <a class="btn" href="{{ incident.source_url }}" target="_blank" rel="noopener noreferrer">Abrir enlace</a>
+              <a class="btn" href="{{ incident.source_url }}" target="_blank" rel="noopener noreferrer">Open link</a>
             </div>
             {% endif %}
           </section>
 
           <section class="card">
-            <h2>Adjunto</h2>
+            <h2>Attachment</h2>
             {% if incident.attachment %}
             <p><a href="/incidents/{{ incident.id }}/attachment">{{ incident.attachment.filename }}</a></p>
             {% else %}
-            <p>Sin adjunto.</p>
+            <p>No attachment.</p>
             {% endif %}
           </section>
 
           <section class="card">
-            <h2>Comentarios <span class="optional">({{ comments|length }})</span></h2>
+            <h2>Comments <span class="optional">({{ comments|length }})</span></h2>
             {% for comment in comments %}
             <article class="comment">
               <div class="avatar">{{ (comment.author_name or '?').split()|map('first')|join|upper }}</div>
@@ -54,18 +54,18 @@
               </div>
             </article>
             {% else %}
-            <p>No hay comentarios todavía.</p>
+            <p>No comments yet.</p>
             {% endfor %}
 
             {% if can_participate %}
             <form class="comment-form" method="post" action="/incidents/{{ incident.id }}/comments">
               <div class="field">
-                <label for="content">Nuevo comentario</label>
+                <label for="content">New comment</label>
                 <textarea id="content" name="content" rows="3" required
-                          placeholder="Escribe una actualización o nota sobre este ticket..."></textarea>
+                          placeholder="Write an update or note about this ticket..."></textarea>
               </div>
               <div class="form-actions">
-                <button class="btn" type="submit">Comentar</button>
+                <button class="btn" type="submit">Comment</button>
               </div>
             </form>
             {% endif %}
@@ -74,35 +74,35 @@
 
         <aside class="detail-side">
           <section class="card">
-            <h2>Gestión del ticket</h2>
+            <h2>Ticket management</h2>
 
             {# Any analyst can assign if none is assigned; if there is one, only the assigned analyst (who can pass it on to another). #}
             {% if user.is_analyst() and not incident.is_closed() and (incident.analyst_id is none or incident.analyst_id == user.id) %}
             <form method="post" action="/incidents/{{ incident.id }}/assign">
               <div class="field">
-                <label for="analyst_id">Asignar analista</label>
+                <label for="analyst_id">Assign analyst</label>
                 <select id="analyst_id" name="analyst_id">
                   {% for analyst in analysts if analyst.id != incident.user_id %}
                   <option value="{{ analyst.id }}" {{ 'selected' if analyst.id == user.id }}>{{ analyst.name }}</option>
                   {% endfor %}
                 </select>
               </div>
-              <button class="btn btn-block" type="submit">{{ 'Reasignar' if incident.analyst_id else 'Asignar' }}</button>
+              <button class="btn btn-block" type="submit">{{ 'Reassign' if incident.analyst_id else 'Assign' }}</button>
             </form>
             {% endif %}
 
             {% if user.is_analyst() and not incident.is_closed() and incident.analyst_id == user.id %}
             <form method="post" action="/incidents/{{ incident.id }}/close">
-              <button class="btn btn-block btn-danger" type="submit">Cerrar incidencia</button>
+              <button class="btn btn-block btn-danger" type="submit">Close incident</button>
             </form>
             {% endif %}
 
             <dl class="meta">
-              <div><dt>Creada por</dt><dd>{{ incident.user_name }}</dd></div>
-              <div><dt>Analista asignado</dt><dd>{{ incident.analyst_name or 'Sin asignar' }}</dd></div>
-              <div><dt>Apertura</dt><dd>{{ incident.open_date }}</dd></div>
+              <div><dt>Created by</dt><dd>{{ incident.user_name }}</dd></div>
+              <div><dt>Assigned analyst</dt><dd>{{ incident.analyst_name or 'Unassigned' }}</dd></div>
+              <div><dt>Opened</dt><dd>{{ incident.open_date }}</dd></div>
               {% if incident.close_date %}
-              <div><dt>Cierre</dt><dd>{{ incident.close_date }}</dd></div>
+              <div><dt>Closed</dt><dd>{{ incident.close_date }}</dd></div>
               {% endif %}
             </dl>
           </section>

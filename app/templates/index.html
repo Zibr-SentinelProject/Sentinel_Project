@@ -1,28 +1,28 @@
 {% extends "base.html" %}
 
-{% block title %}Gestión de incidencias{% endblock %}
+{% block title %}Incident management{% endblock %}
 
 {% block content %}
 {% set severities = [
-  ("low", "Baja", "Mejoras o dudas sin impacto en el servicio."),
-  ("medium", "Media", "Afecta parcialmente, hay alternativa."),
-  ("high", "Alta", "Afecta a una función importante."),
-  ("critical", "Crítica", "Servicio caído, atención inmediata."),
+  ("low", "Low", "Improvements or questions with no impact on the service."),
+  ("medium", "Medium", "Partially affected, a workaround exists."),
+  ("high", "High", "Affects an important feature."),
+  ("critical", "Critical", "Service down, immediate attention required."),
 ] %}
 
 <main>
   <section class="hero">
     <div class="container">
-      <h1>Reporta, asigna y cierra incidencias</h1>
-      <p>Sentinel centraliza los tickets de tu equipo con prioridad clara y seguimiento de principio a fin.</p>
-      <a class="btn" href="/incidents/new">Crear ticket</a>
-      <a class="btn btn-outline" href="/incidents">Ver tickets</a>
+      <h1>Report, assign and close incidents</h1>
+      <p>Sentinel centralizes your team's tickets with clear priority and end-to-end tracking.</p>
+      <a class="btn" href="/incidents/new">Create ticket</a>
+      <a class="btn btn-outline" href="/incidents">View tickets</a>
     </div>
   </section>
 
   <section class="section">
     <div class="container">
-      <h2>Niveles de severidad</h2>
+      <h2>Severity levels</h2>
       <div class="grid">
         {% for key, name, description in severities %}
         <div class="card">

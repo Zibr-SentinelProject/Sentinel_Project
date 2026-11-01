@@ -1,40 +1,40 @@
 {% extends "base.html" %}
 
-{% block title %}Incidencias{% endblock %}
+{% block title %}Incidents{% endblock %}
 
 {% block content %}
 <main>
   <section class="section">
     <div class="container">
-      <h1>Incidencias</h1>
+      <h1>Incidents</h1>
       <p>
-        <a class="btn" href="/incidents/new">Nueva incidencia</a>
-        {% if user.is_analyst() %}<a class="btn" href="/users/new">Nuevo usuario</a> <a class="btn" href="/users">Usuarios</a>{% endif %}
+        <a class="btn" href="/incidents/new">New incident</a>
+        {% if user.is_analyst() %}<a class="btn" href="/users/new">New user</a> <a class="btn" href="/users">Users</a>{% endif %}
       </p>
 
       <form class="filters" method="get" action="/incidents">
-        <input type="text" name="title" placeholder="Buscar por título" value="{{ title or '' }}">
+        <input type="text" name="title" placeholder="Search by title" value="{{ title or '' }}">
         <select name="severity">
-          <option value="">Toda severidad</option>
-          <option value="1" {{ 'selected' if severity == '1' }}>Baja</option>
-          <option value="2" {{ 'selected' if severity == '2' }}>Media</option>
-          <option value="3" {{ 'selected' if severity == '3' }}>Alta</option>
-          <option value="4" {{ 'selected' if severity == '4' }}>Crítica</option>
+          <option value="">All severities</option>
+          <option value="1" {{ 'selected' if severity == '1' }}>Low</option>
+          <option value="2" {{ 'selected' if severity == '2' }}>Medium</option>
+          <option value="3" {{ 'selected' if severity == '3' }}>High</option>
+          <option value="4" {{ 'selected' if severity == '4' }}>Critical</option>
         </select>
         <select name="state">
-          <option value="">Todo estado</option>
-          <option value="1" {{ 'selected' if state == '1' }}>Abierta</option>
-          <option value="2" {{ 'selected' if state == '2' }}>Pendiente</option>
-          <option value="3" {{ 'selected' if state == '3' }}>Cerrada</option>
+          <option value="">All states</option>
+          <option value="1" {{ 'selected' if state == '1' }}>Open</option>
+          <option value="2" {{ 'selected' if state == '2' }}>Pending</option>
+          <option value="3" {{ 'selected' if state == '3' }}>Closed</option>
         </select>
-        <button class="btn" type="submit">Buscar</button>
-        <a href="/incidents">Limpiar</a>
+        <button class="btn" type="submit">Search</button>
+        <a href="/incidents">Clear</a>
       </form>
 
       {% if incidents %}
       <table class="table">
         <thead>
-          <tr><th>Título</th><th>Severidad</th><th>Estado</th><th>Analista</th><th>Abierta</th></tr>
+          <tr><th>Title</th><th>Severity</th><th>State</th><th>Analyst</th><th>Opened</th></tr>
         </thead>
         <tbody>
           {% for incident in incidents %}
@@ -42,14 +42,14 @@
             <td><a href="/incidents/{{ incident.id }}">{{ incident.title }}</a></td>
             <td><span class="badge badge-{{ incident.severity_key }}">{{ incident.severity_name }}</span></td>
             <td>{{ incident.state_name }}</td>
-            <td>{{ incident.analyst_name or 'Sin asignar' }}</td>
+            <td>{{ incident.analyst_name or 'Unassigned' }}</td>
             <td>{{ incident.open_date }}</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
       {% else %}
-      <p>No hay incidencias que mostrar.</p>
+      <p>No incidents to show.</p>
       {% endif %}
     </div>
   </section>

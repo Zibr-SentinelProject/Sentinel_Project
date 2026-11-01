@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,16 +14,16 @@
       <a class="brand" href="/">Sentinel<span>.</span></a>
       <nav class="nav">
         {% if session.get('user_id') %}
-        <a href="/incidents">Incidencias</a>
+        <a href="/incidents">Incidents</a>
         <details class="user-menu">
-          <summary>{{ session.get('user_name', 'Mi cuenta') }}</summary>
+          <summary>{{ session.get('user_name', 'My account') }}</summary>
           <div class="user-menu-list">
-            <a href="/password">Cambiar contraseña</a>
-            <a href="/logout">Cerrar sesión</a>
+            <a href="/password">Change password</a>
+            <a href="/logout">Log out</a>
           </div>
         </details>
         {% else %}
-        <a class="btn" href="/login">Iniciar sesión</a>
+        <a class="btn" href="/login">Log in</a>
         {% endif %}
       </nav>
     </div>
