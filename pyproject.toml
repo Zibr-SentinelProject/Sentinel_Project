@@ -4,3 +4,8 @@ line-length = 120
 [tool.ruff.lint]
 select = ["E", "F", "W", "N", "B", "A"]
 ignore = ["A002"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# So that "import app" works when running plain "pytest" from the project root.
+pythonpath = ["."]

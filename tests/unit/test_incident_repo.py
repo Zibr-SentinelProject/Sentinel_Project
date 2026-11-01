@@ -83,7 +83,8 @@ def test_get_by_id_returns_incident_from_row(repo, cursor):
     incident_id = uuid.uuid4()
     user = uuid.uuid4()
     analyst = uuid.uuid4()
-    cursor.fetchone.return_value = make_row(incident_id, user, analyst_id=analyst, state_id=2)
+    # First SELECT: the incident. Second SELECT: its attachment (none here).
+    cursor.fetchone.side_effect = [make_row(incident_id, user, analyst_id=analyst, state_id=2), None]
 
     incident = repo.get_by_id(incident_id)
 
@@ -97,7 +98,7 @@ def test_get_by_id_returns_incident_from_row(repo, cursor):
 
 def test_get_by_id_accepts_unassigned_incident(repo, cursor):
     incident_id = uuid.uuid4()
-    cursor.fetchone.return_value = make_row(incident_id, uuid.uuid4(), analyst_id=None)
+    cursor.fetchone.side_effect = [make_row(incident_id, uuid.uuid4(), analyst_id=None), None]
 
     assert repo.get_by_id(incident_id).analyst_id is None
 

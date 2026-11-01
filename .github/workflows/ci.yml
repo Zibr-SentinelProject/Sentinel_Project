@@ -21,3 +21,7 @@ jobs:
       - name: Lint with Ruff
         run: ruff check app
 
+      # Only the unit tests run here; the functional ones (tests/functional) are run locally with "pytest".
+      - name: Run unit tests
+        run: pytest tests/unit
+

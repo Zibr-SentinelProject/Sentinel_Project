@@ -39,7 +39,7 @@ def test_create_executes_insert_and_commits(repo, connection, cursor):
     result = repo.create(new)
 
     query, params = cursor.execute.call_args.args
-    assert query.startswith("INSERT INTO comments")
+    assert query.startswith("INSERT INTO comment ")
     assert params == (new.id, "Un comentario", author, incident, new.timestamp)
     connection.commit.assert_called_once()
     connection.rollback.assert_not_called()
