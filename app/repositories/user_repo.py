@@ -16,18 +16,6 @@ class UserRepository(RepositoryABC):
             password=str(row["password"])
         )
 
-    # It used fetchone before; now it uses DictCursor, reads all the rows (fetchall) inside the with and returns a list.
-    # def get_all(self):
-    #     query = "SELECT id, name, email, password FROM user"
-    #     try:
-    #         with self.db_connection.cursor() as cursor:
-    #             cursor.execute(query)
-    #         result = cursor.fetchone()
-    #         return self._row_to_user(result) if result else None
-    #     except MySQLError as e:
-    #         print(f"Error getting all users: {e}")
-    #         self.db_connection.rollback()
-    #         raise
     def get_all(self):
         query = "SELECT id, name, email, password, role FROM user"
         with self.db_connection.cursor(DictCursor) as cursor:
@@ -40,8 +28,6 @@ class UserRepository(RepositoryABC):
         return users
 
     def get_by_id(self, user_id: UUID):
-        # I removed a =
-        # query = "SELECT id, name, email, password FROM user WHERE id == %s"
         query = "SELECT id, name, email, password, role FROM user WHERE id = %s"
         with self.db_connection.cursor(DictCursor) as cursor:
             cursor.execute(query, (user_id,))
@@ -55,21 +41,6 @@ class UserRepository(RepositoryABC):
             result = cursor.fetchone()
         return self._row_to_user(result) if result else None
 
-    # I renamed the parameter to "new_user".
-    # I moved the commit and the return out of the with.
-    # def create(self, user: user):
-    #     query = "INSERT INTO user (id, name, email, password) VALUES (%s, %s, %s, %s)"
-    #     try:
-    #         with self.db_connection.cursor() as cursor:
-    #             cursor.execute(query, (
-    #                 str(user.id), str(user.name), str(user.email), str(user.password)
-    #             ))
-    #             self.db_connection.commit()
-    #             return user
-    #     except MySQLError as e:
-    #         print(f"Error inserting user: {e}")
-    #         self.db_connection.rollback()
-    #         raise
     def create(self, new_user: User):
         query = "INSERT INTO user (id, name, email, password, role) VALUES (%s, %s, %s, %s, %s)"
         try:
@@ -84,22 +55,6 @@ class UserRepository(RepositoryABC):
             self.db_connection.rollback()
             raise
 
-    # I replaced execute() with cursor, removed a = and the commit was missing. Also update receives (id, entity),
-    # like the RepositoryABC class.
-    # def update(self, user: user):
-    #     query = "UPDATE user SET (name = %s, email = %s, password = %s) WHERE id == %s"
-    #     try:
-    #         with self.db_connection.execute(query, (
-    #                 str(user.name),
-    #                 str(user.email),
-    #                 str(user.password),
-    #                 str(user.id)
-    #             )):
-    #             return user
-    #     except MySQLError as e:
-    #         print(f"Error updating user: {e}")
-    #         self.db_connection.rollback()
-    #         raise
     def update(self, id: UUID, updated_user: User):
         query = "UPDATE user SET name = %s, email = %s, password = %s WHERE id = %s"
         try:
@@ -130,19 +85,7 @@ class UserRepository(RepositoryABC):
             self.db_connection.rollback()
             raise
 
-    # It raised an error, the comma was needed: (id,).
-    # Now it returns True if the user was deleted or False if it did not exist.
-    # def delete(self, id):
-    #     query = "DELETE FROM user WHERE id == %s"
-    #     try:
-    #         with self.db_connection.execute(query, (
-    #             str(id)
-    #         )):
-    #             return None
-    #     except MySQLError as e:
-    #         print(f"Error deleting user: {e}")
-    #         self.db_connection.rollback()
-    #         raise
+    # Returns True if the user was deleted or False if it did not exist.
     def delete(self, id: UUID):
         query = "DELETE FROM user WHERE id = %s"
         try:

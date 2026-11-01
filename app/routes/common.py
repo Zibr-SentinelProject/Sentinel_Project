@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from flask import Blueprint, flash, jsonify, redirect, render_template, request, session
+from flask import Blueprint, flash, redirect, render_template, request, session
 
 from app.services.factory import get_user_service
 
@@ -23,10 +23,6 @@ def current_user():
         # The session user no longer exists in the database.
         session.clear()
         return None
-
-
-def login_error():
-    return jsonify(error="Login required"), 401
 
 
 def register_error_handlers(app):
