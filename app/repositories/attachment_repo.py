@@ -10,16 +10,14 @@ class AttachmentRepository (RepositoryABC):
 
     def _row_to_attachment(self, row: dict) -> Attachment:
         """Convert a database row (dict) into an Attachment object."""
-        attachment = Attachment(
+        return Attachment(
             id=UUID(str(row["id"])),
             incident_id=UUID(str(row["incident_id"])),
             filename=row["filename"],
             filetype=row["filetype"],
             filesize=row["filesize"],
+            path=row["path"],
         )
-        # The path stored in the DB takes precedence: old attachments don't follow the <id>.<ext> format.
-        attachment.path = row["path"]
-        return attachment
 
     def create(self, attachment: Attachment):
         query = (
