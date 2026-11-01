@@ -68,10 +68,10 @@ class IncidentRepository (RepositoryABC):
                 if incident.attachment:
                     attachment = incident.attachment
                     cursor.execute(
-                        "INSERT INTO attachment (id, incident_id, filename, filetype, filesize, path) "
+                        "INSERT INTO attachment (id, incident_id, filename, filetype, filesize, stored_name) "
                         "VALUES (%s, %s, %s, %s, %s, %s)",
                         (attachment.id, incident.id, attachment.filename,
-                         attachment.filetype, attachment.filesize, attachment.path),
+                         attachment.filetype, attachment.filesize, attachment.stored_name),
                     )
             self.db_connection.commit()
             return incident
@@ -135,7 +135,10 @@ class IncidentRepository (RepositoryABC):
 
     def _get_attachment(self, incident_id: UUID):
         """The attachment of the incident, or None if it has none (there is at most one)."""
-        query = "SELECT id, incident_id, filename, filetype, filesize, path FROM attachment WHERE incident_id = %s"
+        query = (
+            "SELECT id, incident_id, filename, filetype, filesize, stored_name "
+            "FROM attachment WHERE incident_id = %s"
+        )
         with self.db_connection.cursor(DictCursor) as cursor:
             cursor.execute(query, (incident_id,))
             row = cursor.fetchone()
@@ -147,8 +150,7 @@ class IncidentRepository (RepositoryABC):
             filename=row["filename"],
             filetype=row["filetype"],
             filesize=row["filesize"],
-            # The stored path takes precedence: old attachments don't follow the <id>.<ext> format.
-            path=row["path"],
+            stored_name=row["stored_name"],
         )
 
     def get_by_user(self, user_id: UUID):

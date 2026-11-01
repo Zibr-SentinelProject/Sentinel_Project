@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS attachment (
     filename    VARCHAR(255) NOT NULL,
     filetype    VARCHAR(100) NOT NULL,
     filesize    INT UNSIGNED NOT NULL,
-    path        VARCHAR(500) NOT NULL,
+    stored_name VARCHAR(255) NOT NULL,
     CONSTRAINT fk_attachments_incident FOREIGN KEY (incident_id) REFERENCES incident (id) ON DELETE CASCADE
 );
 

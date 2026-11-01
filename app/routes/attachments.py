@@ -1,5 +1,3 @@
-import os
-
 from flask import Blueprint, redirect, send_file
 
 from app.routes.common import current_user
@@ -18,5 +16,5 @@ def download_attachment(incident_id):
     attachment = get_incident_service().get_incident(user, incident_id).attachment
     if attachment is None:
         raise LookupError("This incident has no attachment")
-    # send_file resolves relative paths from the app folder, not from where it was launched; hence abspath.
-    return send_file(os.path.abspath(attachment.path), download_name=attachment.filename)
+    # send_file resolves relative paths from the app folder, not from where it was launched; hence resolve().
+    return send_file(attachment.path.resolve(), download_name=attachment.filename)
