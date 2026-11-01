@@ -28,14 +28,30 @@ class Incident:
         # Names of the creator and the analyst; only filled in when the repository does a JOIN with user.
         self.user_name = user_name
         self.analyst_name = analyst_name
-        self.analyst_id = None
         self.title = title
         self.description = description
-        self.severity = severity
-        self.state = state or self.OPEN
         self.open_date = open_date or datetime.today().replace(microsecond=0)
-        self.close_date = close_date
-        self.analyst_id = analyst_id
+        # These four are private: they only change through assign() and change_state().
+        self._severity = severity
+        self._state = state or self.OPEN
+        self._close_date = close_date
+        self._analyst_id = analyst_id
+
+    @property
+    def severity(self) -> int:
+        return self._severity
+
+    @property
+    def state(self) -> int:
+        return self._state
+
+    @property
+    def close_date(self) -> datetime:
+        return self._close_date
+
+    @property
+    def analyst_id(self) -> uuid.UUID:
+        return self._analyst_id
 
     def is_closed(self) -> bool:
         return self.state == self.CLOSED
@@ -58,14 +74,14 @@ class Incident:
             raise ValueError("A closed incident cannot be assigned")
         if analyst_id == self.user_id:
             raise ValueError("An analyst cannot be assigned their own incident")
-        self.analyst_id = analyst_id
+        self._analyst_id = analyst_id
 
     def change_state(self, new_state: int):
         if new_state not in (self.OPEN, self.PENDING, self.CLOSED):
             raise ValueError("Invalid state")
-        self.state = new_state
+        self._state = new_state
         if new_state == self.CLOSED:
-            self.close_date = datetime.today().replace(microsecond=0)
+            self._close_date = datetime.today().replace(microsecond=0)
 
     def close(self):
         self.change_state(self.CLOSED)

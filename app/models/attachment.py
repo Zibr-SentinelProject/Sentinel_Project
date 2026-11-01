@@ -7,15 +7,21 @@ class Attachment():
     PATHFILE = "attachments/"
     ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "application/pdf"]
 
-    def __init__(self, incident_id: UUID, filename: str, filetype: str, filesize: int, id: UUID = None):
+    def __init__(self, incident_id: UUID, filename: str, filetype: str, filesize: int, id: UUID = None,
+                 path: str = None):
         self.id = id or uuid4()
         self.incident_id = incident_id
         self.filename = filename
         self.filetype = filetype
         self.filesize = filesize
         # The file on disk uses the (unique) id and keeps the extension; the original name is only displayed.
+        # A path read from the DB is kept as it is, because old attachments don't follow the <id>.<ext> format.
         extension = os.path.splitext(filename)[1]
-        self.path = self.PATHFILE + f"{self.id}{extension}"
+        self._path = path or self.PATHFILE + f"{self.id}{extension}"
+
+    @property
+    def path(self) -> str:
+        return self._path
 
     def is_valid_filetype(self)-> bool:
         return self.filetype in self.ALLOWED_FILE_TYPES

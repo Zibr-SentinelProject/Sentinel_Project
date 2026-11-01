@@ -18,7 +18,15 @@ class User:
         self.id = id or uuid.uuid4()
         self.name = name
         self.email = email
-        self.password = password
+        self._password = password
+
+    @property
+    def password(self):
+        return self._password
+
+    def change_password(self, new_password: str):
+        """The only way to change the password (see UserService.change_password)."""
+        self._password = new_password
 
     def view_all_incidents(self):
         """It's a permission to know if the user can or not depending of its role.
