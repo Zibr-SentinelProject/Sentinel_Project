@@ -1,6 +1,7 @@
 from flask import Blueprint, redirect, request
 
-from app.routes.common import current_user, get_comment_service
+from app.routes.common import current_user
+from app.services.factory import get_comment_service
 
 comments_bp = Blueprint("comments", __name__)
 

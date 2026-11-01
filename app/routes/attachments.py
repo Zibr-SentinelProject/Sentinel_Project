@@ -2,7 +2,8 @@ import os
 
 from flask import Blueprint, redirect, send_file
 
-from app.routes.common import current_user, get_attachment_service
+from app.routes.common import current_user
+from app.services.factory import get_attachment_service
 
 attachments_bp = Blueprint("attachments", __name__)
 
