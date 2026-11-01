@@ -30,6 +30,17 @@
   </header>
   {% endblock %}
 
+  {# Messages sent with flash() from the Python code (see register_error_handlers). #}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="container flashes">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
   {% block content %}{% endblock %}
 
   {% block footer %}

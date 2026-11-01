@@ -692,6 +692,10 @@ h3 {
   font-size: 0.9rem;
 }
 
+.flashes {
+  margin-top: 1rem;
+}
+
 .alert-error {
   background: var(--maroon-bg);
   border-color: var(--maroon);

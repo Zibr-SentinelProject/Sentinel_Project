@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from flask import Blueprint, jsonify, render_template, session
+from flask import Blueprint, flash, jsonify, redirect, render_template, request, session
 
 from app.services.factory import get_user_service
 
@@ -30,16 +30,21 @@ def login_error():
 
 
 def register_error_handlers(app):
-    """Services raise exceptions; here we turn them into HTTP responses for the whole app."""
+    """Services raise exceptions; here we turn them into a flashed message for the whole app."""
+
+    def back_with_error(error):
+        # flash() keeps the message in the session; base.html shows it on the page we go back to.
+        flash(str(error), "error")
+        return redirect(request.referrer or "/incidents")
 
     @app.errorhandler(PermissionError)
     def forbidden(error):
-        return jsonify(error=str(error)), 403
+        return back_with_error(error)
 
     @app.errorhandler(LookupError)
     def not_found(error):
-        return jsonify(error=str(error)), 404
+        return back_with_error(error)
 
     @app.errorhandler(ValueError)
     def bad_request(error):
-        return jsonify(error=str(error)), 400
+        return back_with_error(error)
