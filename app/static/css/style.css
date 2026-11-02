@@ -389,15 +389,10 @@ h3 {
 }
 
 /* new incident form */
-.breadcrumb {
+.back-link {
+  display: inline-block;
   margin: 0 0 0.25rem;
   font-size: 0.85rem;
-  color: var(--text-muted);
-}
-
-.breadcrumb span {
-  color: var(--purple-dark);
-  font-weight: 600;
 }
 
 .page-subtitle {
@@ -537,10 +532,6 @@ h3 {
   justify-content: space-between;
   gap: 0.5rem;
   margin-bottom: 1rem;
-}
-
-.detail-top .breadcrumb {
-  margin: 0;
 }
 
 .detail-layout {
