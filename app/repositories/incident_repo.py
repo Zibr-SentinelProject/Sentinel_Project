@@ -191,7 +191,7 @@ class IncidentRepository (RepositoryABC):
             incident (Incident): It recibes the incident object whith the content you want to update
 
         Returns:
-            incident (Incident): It returns the incident updated 
+            incident (Incident): It returns the incident updated
         """
         query = (
             "UPDATE incident SET severity_id = %s, state_id = %s, analyst_id = %s, close_date = %s WHERE id = %s"
