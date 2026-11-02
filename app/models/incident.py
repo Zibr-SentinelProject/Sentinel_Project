@@ -1,9 +1,8 @@
 from datetime import datetime
 import uuid
 
-
 class Incident:
-
+    """This class is used to create de structure of the model incident"""
 
     # Ids of the con_state and con_severity tables (see init.sql)
     OPEN = 1
@@ -19,7 +18,25 @@ class Incident:
                  id: uuid.UUID = None, state: int = None, open_date: datetime = None,
                  close_date: datetime = None, analyst_id: uuid.UUID = None,
                  user_name: str = None, analyst_name: str = None,
-                 source_url: str = None, source_title: str = None, attachment=None):
+                 source_url: str = None, source_title: str = None, attachment:Atta=None):
+        """This method is the constructor of the class incident
+
+        Args:
+            user_id (uuid.UUID): It recibes an user as UUID to create an incident object
+            title (str): It recibes an title as string to create an incident object
+            description (str): It recibes an decription as string to create an incident object
+            severity (int): It recibes an severity as integer to create an incident object
+            id (uuid.UUID, optional): It recibes an incident as UUID to create an incident object, only for geting incidents form de database. Defaults to None.
+            state (int, optional): It recibes an state as integer to create an incident object. Defaults to None.
+            open_date (datetime, optional): It recibes an opening date as datetime to create an incident object. Defaults to None.
+            close_date (datetime, optional): It recibes an closing date as datetime to create an incident object. Defaults to None.
+            analyst_id (uuid.UUID, optional): It recibes an analist as UUID to create an incident object. Defaults to None.
+            user_name (str, optional): It recibes an opening user name as string to create an incident object. Defaults to None.
+            analyst_name (str, optional): It recibes an analyst name as string to create an incident object. Defaults to None.
+            source_url (str, optional): It recibes an source url as string to create an incident object. Defaults to None.
+            source_title (str, optional): It recibes an source title as string to create an incident object. Defaults to None.
+            attachment (Attachment, optional): It recibes an Attachment as string to create an incident object. Defaults to None.
+        """
         self.id = id or uuid.uuid4()
         self.user_id = user_id
         # Optional file that is saved together with the ticket when it is created (one per incident).

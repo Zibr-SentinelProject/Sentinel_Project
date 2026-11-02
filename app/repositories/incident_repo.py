@@ -137,7 +137,7 @@ class IncidentRepository (RepositoryABC):
         """This method gets the atachment asociated to a an incident
 
         Args:
-            incident_id (UUID): It recibes the id of the incident
+            incident_id (UUID): It recibes the UUID of the incident
 
         Returns:
             incident_id (UUID): It return the attachment, if it exists
@@ -164,7 +164,7 @@ class IncidentRepository (RepositoryABC):
         """This method is used to get all the incidents of a user
 
         Args:
-            user_id (UUID): It recibes the id of the user who created the tickets
+            user_id (UUID): It recibes the UUID of the user who created the tickets
 
         Returns:
             incidents (List): It returns a list of the tickets created by that user, from newest to oldest
@@ -187,7 +187,7 @@ class IncidentRepository (RepositoryABC):
         """This method is used to update an existing incident
 
         Args:
-            id (UUID): It recibes the id of the incident to update
+            id (UUID): It recibes the UUID of the incident to update
             incident (Incident): It recibes the incident object whith the content you want to update
 
         Returns:
@@ -214,7 +214,7 @@ class IncidentRepository (RepositoryABC):
         """This method is used to delete an incident
 
         Args:
-            id (UUID): It recibes the id of the incident to delete
+            id (UUID): It recibes the UUID of the incident to delete
 
         Returns:
             incident (Incident): It returns the incident updated
