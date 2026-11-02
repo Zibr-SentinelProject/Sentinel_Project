@@ -14,7 +14,7 @@ def test_the_stored_name_is_the_id_plus_the_extension_of_the_original_file():
 def test_the_full_path_is_built_from_the_folder_and_the_stored_name():
     attachment = Attachment(uuid.uuid4(), "foto.png", "image/png", 10)
 
-    assert attachment.path == Path("attachments") / attachment.stored_name
+    assert attachment.path == Attachment.folder() / attachment.stored_name
 
 
 def test_changing_the_folder_changes_the_path_of_every_attachment(monkeypatch):

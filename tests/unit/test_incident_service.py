@@ -7,6 +7,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from app.models.attachment import Attachment
 from app.models.incident import Incident
 from app.models.user import Analyst, Employee
 from app.services.incident_service import IncidentService
@@ -88,4 +89,4 @@ def test_create_incident_removes_the_file_if_the_ticket_is_not_saved(service, re
     with pytest.raises(RuntimeError):
         service.create_incident(ana, "t", "d", 1, None, "foto.png", "image/png", b"x")
 
-    assert os.listdir("attachments") == []
+    assert os.listdir(Attachment.folder()) == []

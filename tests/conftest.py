@@ -1,7 +1,9 @@
 import pytest
 
+from app.models.attachment import Attachment
+
 
 @pytest.fixture(autouse=True)
-def in_tmp_dir(tmp_path, monkeypatch):
-    """Attachments are saved in a path relative to the working directory: every test gets a temporary one."""
-    monkeypatch.chdir(tmp_path)
+def attachments_in_tmp_dir(tmp_path, monkeypatch):
+    """Every test saves its attachments in a temporary folder, never in the real one."""
+    monkeypatch.setattr(Attachment, "PATHFILE", tmp_path / "attachments")

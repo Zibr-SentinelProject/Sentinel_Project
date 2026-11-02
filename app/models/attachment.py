@@ -1,10 +1,12 @@
+import os
 from pathlib import Path
 from uuid import UUID, uuid4
 
 class Attachment():
 
-    # Folder where the files are saved. Only this line knows it: the DB stores just the file name.
-    PATHFILE = Path("attachments")
+    # Folder where the files are saved; None means "use ATTACHMENTS_DIR from the .env, or attachments/ in the project
+    # root". Only folder() knows it: the DB stores just the file name.
+    PATHFILE = None
 
     def __init__(self, incident_id: UUID, filename: str, filetype: str, filesize: int, id: UUID = None,
                  stored_name: str = None):
@@ -16,14 +18,20 @@ class Attachment():
         # Name of the file inside PATHFILE: the (unique) id plus the extension. The original name is only displayed.
         self.stored_name = stored_name or f"{self.id}{Path(filename).suffix}"
 
+    @classmethod
+    def folder(cls) -> Path:
+        """Absolute folder of the files. Read when used, so it does not depend on when the .env was loaded."""
+        # Absolute because a relative path depends on the working directory, which under Apache is "/".
+        return cls.PATHFILE or Path(os.getenv("ATTACHMENTS_DIR") or Path(__file__).resolve().parents[2] / "attachments")
+
     @property
     def path(self) -> Path:
-        """Full path of the file, built from PATHFILE every time it is needed."""
-        return self.PATHFILE / self.stored_name
+        """Full path of the file, built from the folder every time it is needed."""
+        return self.folder() / self.stored_name
 
     def save_file(self, content: bytes):
         """Writes the content to disk."""
-        self.PATHFILE.mkdir(parents=True, exist_ok=True)
+        self.folder().mkdir(parents=True, exist_ok=True)
         # "xb": fails if the file already exists, so another attachment is never overwritten.
         with self.path.open("xb") as file:
             file.write(content)
