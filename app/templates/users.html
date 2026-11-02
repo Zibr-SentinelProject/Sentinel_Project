@@ -7,7 +7,6 @@
   <section class="section">
     <div class="container">
       <h1>Users</h1>
-      <p><a class="btn" href="/users/new">New user</a></p>
 
       <table class="table">
         <thead>
@@ -19,7 +18,7 @@
             <td>{{ listed.name }}</td>
             <td>{{ listed.email }}</td>
             <td>
-              <form method="post" action="/users/{{ listed.id }}/role">
+              <form class="filters row-form" method="post" action="/users/{{ listed.id }}/role">
                 <select name="role">
                   {% for role in roles %}
                   <option value="{{ role }}" {{ 'selected' if listed.get_role() == role }}>{{ role }}</option>

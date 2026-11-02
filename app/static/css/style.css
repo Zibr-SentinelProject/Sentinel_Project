@@ -371,6 +371,11 @@ h3 {
   width: auto;
 }
 
+/* the same row of controls inside a table cell: no extra margins */
+.filters.row-form {
+  margin: 0;
+}
+
 /* dropdowns: no native look, with their own arrow so they look like the text fields */
 .field select,
 .filters select {
