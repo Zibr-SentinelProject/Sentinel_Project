@@ -134,7 +134,14 @@ class IncidentRepository (RepositoryABC):
         return incident
 
     def _get_attachment(self, incident_id: UUID):
-        """The attachment of the incident, or None if it has none (there is at most one)."""
+        """This method gets the atachment asociated to a an incident
+
+        Args:
+            incident_id (UUID): It recibes the id of the incident
+
+        Returns:
+            incident_id (UUID): It return the attachment, if it exists
+        """
         query = (
             "SELECT id, incident_id, filename, filetype, filesize, stored_name "
             "FROM attachment WHERE incident_id = %s"
@@ -157,10 +164,10 @@ class IncidentRepository (RepositoryABC):
         """This method is used to get all the incidents of a user
 
         Args:
-            user_id (UUID): Id of the user who created the tickets
+            user_id (UUID): It recibes the id of the user who created the tickets
 
         Returns:
-            incidents (List): the tickets created by that user, from newest to oldest
+            incidents (List): It returns a list of the tickets created by that user, from newest to oldest
         """
         query = (
             "SELECT i.id, i.user_id, i.analyst_id, i.title, i.description, i.severity_id, s.name AS severity_name, "
@@ -177,6 +184,15 @@ class IncidentRepository (RepositoryABC):
         return [self._row_to_incident(result) for result in results]
 
     def update(self, id: UUID, incident: Incident):
+        """This method is used to update an existing incident
+
+        Args:
+            id (UUID): It recibes the id of the incident to update
+            incident (Incident): It recibes the incident object whith the content you want to update
+
+        Returns:
+            incident (Incident): It returns the incident updated 
+        """
         query = (
             "UPDATE incident SET severity_id = %s, state_id = %s, analyst_id = %s, close_date = %s WHERE id = %s"
         )
@@ -195,6 +211,14 @@ class IncidentRepository (RepositoryABC):
             raise
 
     def delete(self, id: UUID):
+        """This method is used to delete an incident
+
+        Args:
+            id (UUID): It recibes the id of the incident to delete
+
+        Returns:
+            incident (Incident): It returns the incident updated
+        """
         query = "DELETE FROM incident WHERE id = %s"
         try:
             with self.db_connection.cursor() as cursor:
