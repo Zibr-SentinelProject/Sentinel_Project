@@ -10,7 +10,14 @@ from app.models.comment import Comment
 class CommentRepository (RepositoryABC):
 
     def _row_to_comment(self, row: dict) -> Comment:
-        """Convert a database row (dict) into a Comment object."""
+        """Turns a database row into a Comment.
+
+        Args:
+            row (dict): The row of the comment table
+
+        Returns:
+            comment (Comment): The comment built from the row
+        """
         return Comment(
             id=UUID(str(row["id"])),
             content=row["content"],
@@ -21,6 +28,14 @@ class CommentRepository (RepositoryABC):
         )
 
     def create(self, comment: Comment):
+        """Saves a comment in the database.
+
+        Args:
+            comment (Comment): The comment to save
+
+        Returns:
+            comment (Comment): The comment saved
+        """
         query = "INSERT INTO comment (id, content, author_id, incident_id, timestamp) VALUES (%s, %s, %s, %s, %s)"
         try:
             with self.db_connection.cursor() as cursor:
@@ -36,6 +51,14 @@ class CommentRepository (RepositoryABC):
             raise
 
     def get_by_id(self, comment_id: UUID):
+        """Gets a comment by its UUID.
+
+        Args:
+            comment_id (UUID): The UUID of the comment
+
+        Returns:
+            comment (Comment): The comment, or None if it does not exist
+        """
         query = "SELECT id, content, author_id, incident_id, timestamp FROM comment WHERE id = %s"
         with self.db_connection.cursor(DictCursor) as cursor:
             cursor.execute(query, (comment_id,))
@@ -47,6 +70,14 @@ class CommentRepository (RepositoryABC):
         return comment
 
     def get_all_by_incident(self, incident_id: UUID):
+        """Gets all the comments of an incident.
+
+        Args:
+            incident_id (UUID): The UUID of the incident
+
+        Returns:
+            comments (List): The comments with the name of their author, from oldest to newest
+        """
         query = (
             "SELECT c.id, c.content, c.author_id, c.incident_id, c.timestamp, u.name AS author_name "
             "FROM comment c INNER JOIN user u ON u.id = c.author_id "
@@ -58,6 +89,15 @@ class CommentRepository (RepositoryABC):
         return [self._row_to_comment(result) for result in results]
 
     def update(self, id: UUID, comment: Comment):
+        """Changes the text of a comment.
+
+        Args:
+            id (UUID): The UUID of the comment to update
+            comment (Comment): The comment with the new text
+
+        Returns:
+            comment (Comment): The comment updated
+        """
         query = "UPDATE comment SET content = %s WHERE id = %s"
         try:
             with self.db_connection.cursor() as cursor:
@@ -70,6 +110,14 @@ class CommentRepository (RepositoryABC):
             raise
 
     def delete(self, id: UUID):
+        """Deletes a comment.
+
+        Args:
+            id (UUID): The UUID of the comment to delete
+
+        Returns:
+            deleted (bool): True if the comment was deleted, False if it did not exist
+        """
         query = "DELETE FROM comment WHERE id = %s"
         try:
             with self.db_connection.cursor() as cursor:

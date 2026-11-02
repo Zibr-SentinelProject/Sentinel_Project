@@ -8,6 +8,17 @@ attachments_bp = Blueprint("attachments", __name__)
 
 @attachments_bp.get("/incidents/<uuid:incident_id>/attachment")
 def download_attachment(incident_id):
+    """Downloads the file attached to an incident. If the user is not logged in, it goes to the login.
+
+    Args:
+        incident_id (UUID): The incident, taken from the url
+
+    Raises:
+        LookupError: If the incident has no attachment
+
+    Returns:
+        file: The file, with its original name
+    """
     user = current_user()
     if user is None:
         return redirect("/login")

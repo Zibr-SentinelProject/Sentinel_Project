@@ -8,6 +8,14 @@ comments_bp = Blueprint("comments", __name__)
 
 @comments_bp.post("/incidents/<uuid:incident_id>/comments")
 def add_comment(incident_id):
+    """Adds a comment to an incident using the form. If the user is not logged in, it goes to the login.
+
+    Args:
+        incident_id (UUID): The incident, taken from the url
+
+    Returns:
+        redirect: Goes back to the page of the incident
+    """
     user = current_user()
     if user is None:
         return redirect("/login")
