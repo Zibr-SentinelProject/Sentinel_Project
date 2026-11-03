@@ -1,0 +1,39 @@
+services:
+  db:
+    image: mariadb:11
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: sentinel
+      MARIADB_USER: sentinel
+      MARIADB_PASSWORD: sentinel
+    volumes:
+      - db_data:/var/lib/mysql
+      # Se ejecuta solo la primera vez (cuando db_data está vacío)
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: sentinel
+      DB_PASSWORD: sentinel
+      DB_NAME: sentinel
+      SECRET_KEY: dev-secret-key
+      FLASK_DEBUG: "1"
+    volumes:
+      # Código montado: los cambios se recargan sin reconstruir la imagen
+      - .:/code
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
