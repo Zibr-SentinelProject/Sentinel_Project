@@ -105,6 +105,9 @@ class Incident:
         if analyst_id == self.user_id:
             raise ValueError("An analyst cannot be assigned their own incident")
         self._analyst_id = analyst_id
+        # An open ticket becomes pending as soon as it has an analyst; reassigning keeps its state.
+        if self.state == self.OPEN:
+            self._state = self.PENDING
 
     def change_state(self, new_state: int):
         if new_state not in (self.OPEN, self.PENDING, self.CLOSED):

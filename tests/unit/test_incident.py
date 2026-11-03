@@ -26,6 +26,14 @@ def test_assign_sets_the_analyst():
     assert incident.analyst_id == analyst
 
 
+def test_assign_moves_an_open_incident_to_pending():
+    incident = make_incident()
+
+    incident.assign(uuid.uuid4())
+
+    assert incident.state == Incident.PENDING
+
+
 def test_creator_cannot_be_assigned_to_their_own_incident():
     incident = make_incident()
 
