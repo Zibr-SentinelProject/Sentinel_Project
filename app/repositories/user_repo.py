@@ -17,7 +17,7 @@ class UserRepository(RepositoryABC):
         )
 
     def get_all(self):
-        query = "SELECT id, name, email, password, role FROM user"
+        query = "SELECT id, name, email, password, role FROM user ORDER BY name"
         with self.db_connection.cursor(DictCursor) as cursor:
             cursor.execute(query)
             results = cursor.fetchall()
