@@ -7,6 +7,14 @@ from app.models.user import User, ROLE_CLASSES
 class UserRepository(RepositoryABC):
 
     def _row_to_user(self,row: dict) -> User:
+        """This function Turns a sql row into an object User.
+
+        Args:
+            row (sqlrow): This is the sql row that gives the database.
+
+        Returns:
+            User (class): Ibject User.
+        """
         # La columna role decide si devolvemos un Analyst o un Employee.
         user_class = ROLE_CLASSES[row["role"]]
         return user_class(
@@ -29,6 +37,11 @@ class UserRepository(RepositoryABC):
     #         self.db_connection.rollback()
     #         raise
     def get_all(self):
+        """This function makes a query to get all the users from the data base and makes them objects User.
+
+        Returns:
+            User (class): Object User.
+        """
         query = "SELECT id, name, email, password, role FROM user"
         with self.db_connection.cursor(DictCursor) as cursor:
             cursor.execute(query)
@@ -40,6 +53,14 @@ class UserRepository(RepositoryABC):
         return users
 
     def get_by_id(self, user_id: UUID):
+        """This Function makes a query to get the users from the database that have the specified id.
+
+        Args:
+            user_id (UUID): is the user id
+
+        Returns:
+            User (class): Object User.
+        """
         #Le quité un =
         # query = "SELECT id, name, email, password FROM user WHERE id == %s"
         query = "SELECT id, name, email, password, role FROM user WHERE id = %s"
@@ -49,6 +70,14 @@ class UserRepository(RepositoryABC):
         return self._row_to_user(result) if result else None
 
     def get_by_email(self, email: str):
+        """this function gets a user by their email.
+
+        Args:
+            email (str): user email
+
+        Returns:
+            User: it returns a user if there's a user with that email, if not, it returns none. 
+        """
         query = "SELECT id, name, email, password, role FROM user WHERE email = %s"
         with self.db_connection.cursor(DictCursor) as cursor:
             cursor.execute(query, (email,))
@@ -71,6 +100,14 @@ class UserRepository(RepositoryABC):
     #         self.db_connection.rollback()
     #         raise
     def create(self, new_user: User):
+        """This function creates a new user object and a new row in the data base with the parametters given.
+
+        Args:
+            new_user (parametters): This are the parametters to the new User (id, name, email, password, role).
+
+        Returns:
+            User (Class): Object User.
+        """
         query = "INSERT INTO user (id, name, email, password, role) VALUES (%s, %s, %s, %s, %s)"
         try:
             with self.db_connection.cursor() as cursor:
@@ -101,6 +138,15 @@ class UserRepository(RepositoryABC):
     #         self.db_connection.rollback()
     #         raise
     def update(self, id: UUID, updated_user: User):
+        """This function updates a user with the id given with the parametters given.
+
+        Args:
+            id (UUID): The user id.
+            updated_user (parametters): the new user parametters
+
+        Returns:
+            User (class): Object User.
+        """
         query = "UPDATE user SET name = %s, email = %s, password = %s WHERE id = %s"
         try:
             with self.db_connection.cursor() as cursor:
@@ -132,6 +178,14 @@ class UserRepository(RepositoryABC):
     #         self.db_connection.rollback()
     #         raise
     def delete(self, id: UUID):
+        """This function deletes the user with the given id.
+
+        Args:
+            id (UUID): The user id.
+
+        Returns:
+            str: it returns deleted if the user was succesfully deleted or the database error if not.
+        """
         query = "DELETE FROM user WHERE id = %s"
         try:
             with self.db_connection.cursor() as cursor:
