@@ -43,6 +43,8 @@ Open http://localhost:5000 and log in with the initial analyst:
 - email: `analyst@sentinel.local`
 - password: `analyst123`
 
+> **Port 5000 already in use?** If you get `ports are not available: ... 0.0.0.0:5000: bind: address already in use`, another program is using port 5000 on your machine. On macOS this is usually **AirPlay Receiver** (System Settings → General → AirDrop & Handoff → turn off "AirPlay Receiver"). It can also happen on Windows or Linux with any other app on that port. To fix it, either free the port or change the host port in `docker-compose.yml` (for example `"8080:5000"`) and open http://localhost:8080 instead.
+
 The code folder is mounted into the container, so edits reload automatically. The database is created from `init.sql` the first time only. To reset it:
 
 ```bash
