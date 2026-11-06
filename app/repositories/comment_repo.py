@@ -8,6 +8,7 @@ from app.repositories.abc_repo import RepositoryABC
 from app.models.comment import Comment
 
 class CommentRepository (RepositoryABC):
+    """Saves and reads the comments in the database."""
 
     def _row_to_comment(self, row: dict) -> Comment:
         """Turns a database row into a Comment.

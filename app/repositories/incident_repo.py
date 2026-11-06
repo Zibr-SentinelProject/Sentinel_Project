@@ -8,20 +8,21 @@ from app.models.attachment import Attachment
 from app.models.incident import Incident
 
 class IncidentRepository (RepositoryABC):
-    """This class is used to comunicate between the database and the web
+    """Saves and reads the incidents (and their attachment) in the database.
 
     Args:
         RepositoryABC (class): It inherits the methods of the parent class
     """
 
     def _row_to_incident(self,row: dict) -> Incident:
-        """This method coverts a database query into a python object
+        """Turns a database row into an Incident.
 
         Args:
-            row (dict): It recibes row of the incident table of the database
+            row (dict): The row of the incident table, joined with the names of the user, analyst,
+                severity and state
 
         Returns:
-            Incident: It return an incident object with the information of the row
+            Incident: The incident built from the row
         """
         # analyst_id is NULL while the ticket has no assigned analyst.
         analyst_id = row["analyst_id"]
@@ -42,13 +43,13 @@ class IncidentRepository (RepositoryABC):
         )
 
     def create(self, incident: Incident):
-        """This method is used to add rows of incidents into de database
+        """Saves an incident in the database. If it has an attachment, it is saved too.
 
         Args:
-            incident (Incident): It recibes an incident object to insert it
+            incident (Incident): The incident to save
 
         Returns:
-            incident (Incident): It resturns an incident when the insertion was successful
+            incident (Incident): The incident saved
         """
         query = (
             "INSERT INTO incident (id, user_id, title, description, severity_id, state_id, open_date, close_date, "
@@ -81,10 +82,10 @@ class IncidentRepository (RepositoryABC):
             raise
 
     def get_all(self):
-        """This method is used to get all of incidents from de database
+        """Gets all the incidents from the database.
 
         Returns:
-            incidents (List): this method returns a list whith all of the incidents on the database
+            incidents (List): All the incidents
         """
         query = (
             "SELECT i.id, i.user_id, i.analyst_id, i.title, i.description, i.severity_id, s.name AS severity_name, "
@@ -105,14 +106,13 @@ class IncidentRepository (RepositoryABC):
         return incidents
 
     def get_by_id(self, incident_id: UUID):
-        """This method is used to get one incident from de database
+        """Gets one incident by its UUID, with its attachment.
 
         Args:
-            incident_id (UUID): It recibes an incident UUID
+            incident_id (UUID): The UUID of the incident
 
         Returns:
-            incident (Incident): It retuns an incident when the select was successful
-            none: It return none when the select fails or returns nothing
+            incident (Incident): The incident, or None if it does not exist
         """
         query = (
             "SELECT i.id, i.user_id, i.analyst_id, i.title, i.description, i.severity_id, s.name AS severity_name, "
@@ -134,13 +134,13 @@ class IncidentRepository (RepositoryABC):
         return incident
 
     def _get_attachment(self, incident_id: UUID):
-        """This method gets the atachment asociated to a an incident
+        """Gets the attachment of an incident.
 
         Args:
-            incident_id (UUID): It recibes the UUID of the incident
+            incident_id (UUID): The UUID of the incident
 
         Returns:
-            incident_id (UUID): It return the attachment, if it exists
+            attachment (Attachment): The attachment, or None if the incident has no file
         """
         query = (
             "SELECT id, incident_id, filename, filetype, filesize, stored_name "
@@ -161,13 +161,13 @@ class IncidentRepository (RepositoryABC):
         )
 
     def get_by_user(self, user_id: UUID):
-        """This method is used to get all the incidents of a user
+        """Gets all the incidents created by a user.
 
         Args:
-            user_id (UUID): It recibes the UUID of the user who created the tickets
+            user_id (UUID): The UUID of the user who created the incidents
 
         Returns:
-            incidents (List): It returns a list of the tickets created by that user, from newest to oldest
+            incidents (List): The incidents of that user, from newest to oldest
         """
         query = (
             "SELECT i.id, i.user_id, i.analyst_id, i.title, i.description, i.severity_id, s.name AS severity_name, "
@@ -184,14 +184,14 @@ class IncidentRepository (RepositoryABC):
         return [self._row_to_incident(result) for result in results]
 
     def update(self, id: UUID, incident: Incident):
-        """This method is used to update an existing incident
+        """Updates the severity, state, analyst and close date of an incident.
 
         Args:
-            id (UUID): It recibes the UUID of the incident to update
-            incident (Incident): It recibes the incident object whith the content you want to update
+            id (UUID): The UUID of the incident to update
+            incident (Incident): The incident with the new values
 
         Returns:
-            incident (Incident): It returns the incident updated
+            incident (Incident): The incident updated
         """
         query = (
             "UPDATE incident SET severity_id = %s, state_id = %s, analyst_id = %s, close_date = %s WHERE id = %s"
@@ -211,13 +211,13 @@ class IncidentRepository (RepositoryABC):
             raise
 
     def delete(self, id: UUID):
-        """This method is used to delete an incident
+        """Deletes an incident.
 
         Args:
-            id (UUID): It recibes the UUID of the incident to delete
+            id (UUID): The UUID of the incident to delete
 
         Returns:
-            incident (Incident): It returns the incident updated
+            deleted (bool): True if the incident was deleted, False if it did not exist
         """
         query = "DELETE FROM incident WHERE id = %s"
         try:
