@@ -7,8 +7,14 @@ from app.services.link_service import fetch_page_title
 
 
 class IncidentService:
+    """Rules for the incidents: who can create, see, assign and close them."""
 
     def __init__(self, incident_repo):
+        """Creates the service.
+
+        Args:
+            incident_repo (IncidentRepository): Used to save and read the incidents
+        """
         self.incident_repo = incident_repo
 
     def create_incident(self, user: User, title: str, description: str, severity: int, source_url: str = None,
@@ -46,6 +52,17 @@ class IncidentService:
         return incidents
 
     def find_incident(self, incident_id: UUID):
+        """Gets an incident by its UUID without checking who is asking. Use get_incident to check permissions.
+
+        Args:
+            incident_id (UUID): The UUID of the incident
+
+        Raises:
+            LookupError: If the incident does not exist
+
+        Returns:
+            incident (Incident): The incident found
+        """
         incident = self.incident_repo.get_by_id(incident_id)
         if incident is None:
             raise LookupError("Incident not found")

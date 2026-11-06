@@ -10,10 +10,12 @@ from app.services.user_service import UserService
 # The routes get their services from here. Only this file connects services with the database.
 
 def get_user_service():
+    """Creates a UserService connected to the database of the current request."""
     return UserService(UserRepository(get_db()))
 
 
 def get_incident_service():
+    """Creates an IncidentService connected to the database of the current request."""
     return IncidentService(IncidentRepository(get_db()))
 
 

@@ -4,11 +4,28 @@ from app.models.user import Employee, ROLE_CLASSES, User
 
 
 class UserService:
+    """Rules for the users: who can register, create and see them."""
 
     def __init__(self, user_repo):
+        """Creates the service.
+
+        Args:
+            user_repo (UserRepository): Used to save and read the users
+        """
         self.user_repo = user_repo
 
     def get_user(self, user_id: UUID):
+        """Gets a user by its UUID.
+
+        Args:
+            user_id (UUID): The UUID of the user
+
+        Raises:
+            LookupError: If the user does not exist
+
+        Returns:
+            user (User): The user found
+        """
         user = self.user_repo.get_by_id(user_id)
         if user is None:
             raise LookupError("User not found")
