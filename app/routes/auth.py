@@ -8,11 +8,18 @@ auth_bp = Blueprint("auth", __name__)
 
 @auth_bp.get("/login")
 def login_page():
+    """Shows the login form."""
     return render_template("login.html")
 
 
 @auth_bp.post("/login")
 def login():
+    """Logs the user in with the email and password of the form.
+
+    Returns:
+        A redirect to the incidents if it works, or the login page with an error
+        (400 if something is missing, 401 if the data is wrong).
+    """
     email = request.form.get("email")
     password = request.form.get("password")
     if not email or not password:
@@ -32,11 +39,17 @@ def login():
 
 @auth_bp.get("/register")
 def register_page():
+    """Shows the form to create an account."""
     return render_template("register.html")
 
 
 @auth_bp.post("/register")
 def register():
+    """Creates an employee account with the data of the form and logs it in.
+
+    Returns:
+        A redirect to the incidents if it works, or the register page with an error (400).
+    """
     name = request.form.get("name")
     email = request.form.get("email")
     password = request.form.get("password")
@@ -58,6 +71,7 @@ def register():
 
 @auth_bp.get("/password")
 def password_page():
+    """Shows the form to change the password. If the user is not logged in, it goes to the login."""
     user = current_user()
     if user is None:
         return redirect("/login")
@@ -66,6 +80,12 @@ def password_page():
 
 @auth_bp.post("/password")
 def change_password():
+    """Changes the password of the logged user. If the user is not logged in, it goes to the login.
+
+    Returns:
+        The same form with a success message, or with an error (400) if the current password is wrong
+        or the new one is empty.
+    """
     user = current_user()
     if user is None:
         return redirect("/login")
@@ -82,5 +102,6 @@ def change_password():
 
 @auth_bp.get("/logout")
 def logout():
+    """Logs the user out and goes to the login."""
     session.clear()
     return redirect("/login")

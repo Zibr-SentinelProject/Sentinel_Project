@@ -9,6 +9,7 @@ main_bp = Blueprint("main", __name__)
 
 @main_bp.get("/")
 def index():
+    """Shows the home page."""
     return render_template("index.html")
 
 
@@ -29,18 +30,22 @@ def register_error_handlers(app):
     """Services raise exceptions; here we turn them into a flashed message for the whole app."""
 
     def back_with_error(error):
+        """Shows the error message and goes back to the previous page (or to the incidents)."""
         # flash() keeps the message in the session; base.html shows it on the page we go back to.
         flash(str(error), "error")
         return redirect(request.referrer or "/incidents")
 
     @app.errorhandler(PermissionError)
     def forbidden(error):
+        """The user is not allowed to do that (PermissionError)."""
         return back_with_error(error)
 
     @app.errorhandler(LookupError)
     def not_found(error):
+        """The user or incident does not exist (LookupError)."""
         return back_with_error(error)
 
     @app.errorhandler(ValueError)
     def bad_request(error):
+        """The data sent is not valid (ValueError)."""
         return back_with_error(error)

@@ -17,6 +17,11 @@ incidents_bp = Blueprint("incidents", __name__)
 
 @incidents_bp.get("/incidents")
 def list_incidents():
+    """Shows the list of incidents, filtered by title, severity and state from the url.
+
+    Analysts see all of them and employees only their own. The severity chosen is saved in a cookie
+    as the default filter. If the user is not logged in, it goes to the login.
+    """
     user = current_user()
     if user is None:
         return redirect("/login")
@@ -46,6 +51,7 @@ def list_incidents():
 
 @incidents_bp.get("/incidents/new")
 def new_incident_page():
+    """Shows the form to report an incident. If the user is not logged in, it goes to the login."""
     user = current_user()
     if user is None:
         return redirect("/login")
@@ -54,6 +60,10 @@ def new_incident_page():
 
 @incidents_bp.post("/incidents/new")
 def create_incident():
+    """Creates an incident with the data of the form (and the file, if there is one).
+
+    If the user is not logged in, it goes to the login. When it works, it goes to the list of incidents.
+    """
     user = current_user()
     if user is None:
         return redirect("/login")
@@ -76,6 +86,13 @@ def create_incident():
 
 @incidents_bp.get("/incidents/<uuid:incident_id>")
 def incident_detail(incident_id):
+    """Shows one incident with its comments.
+
+    Analysts also get the list of analysts to assign it. If the user is not logged in, it goes to the login.
+
+    Args:
+        incident_id (UUID): The incident, taken from the url
+    """
     user = current_user()
     if user is None:
         return redirect("/login")
@@ -93,6 +110,13 @@ def incident_detail(incident_id):
 
 @incidents_bp.post("/incidents/<uuid:incident_id>/assign")
 def assign_incident(incident_id):
+    """Assigns the incident to the analyst chosen in the form, then goes back to the incident.
+
+    If the user is not logged in, it goes to the login.
+
+    Args:
+        incident_id (UUID): The incident, taken from the url
+    """
     user = current_user()
     if user is None:
         return redirect("/login")
@@ -105,6 +129,11 @@ def assign_incident(incident_id):
 
 @incidents_bp.post("/incidents/<uuid:incident_id>/close")
 def close_incident(incident_id):
+    """Closes the incident, then goes back to the incident. If the user is not logged in, it goes to the login.
+
+    Args:
+        incident_id (UUID): The incident, taken from the url
+    """
     user = current_user()
     if user is None:
         return redirect("/login")
