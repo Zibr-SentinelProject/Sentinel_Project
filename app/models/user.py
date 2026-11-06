@@ -2,18 +2,21 @@ import uuid
 
 
 class User:
-    """this is the users class
+    """A person who uses Sentinel. It is the parent of Analyst and Employee.
+
+    Each subclass sets its own ROLE and decides what the user can do.
     """
     ROLE = None
 
     def __init__(self, name, email, password, id=None):
-        """
+        """Creates a user.
 
         Args:
             name (str): The user's name.
             email (str): The user's email.
             password (str): The user's password.
-            id (uuid): The user's id.
+            id (uuid, optional): Only used when the user comes from the database.
+                If it is not given, a new one is created.
         """
         self.id = id or uuid.uuid4()
         self.name = name
@@ -22,6 +25,7 @@ class User:
 
     @property
     def password(self):
+        """The user's password. It can be read, but only changed with change_password."""
         return self._password
 
     def change_password(self, new_password: str):
@@ -29,34 +33,36 @@ class User:
         self._password = new_password
 
     def view_all_incidents(self):
-        """It's a permission to know if the user can or not depending of its role.
+        """Permission to know if the user can see all the incidents, depending on its role.
+
+        The base class does not decide it. Analyst and Employee override this method.
         """
         pass
 
     def create_tickets(self):
-        """It's a permission to know if the user can or not.
+        """Permission to know if the user can create incidents.
 
         Returns:
-            _type_: _description_
+            bool: True, because every user can create incidents.
         """
         return True
 
     def is_analyst(self) -> bool:
-        """to know if the user is an analyst or not
+        """Tells if the user is an analyst or not.
 
         Returns:
-            bool: False if the user isn't analyst, true if the user is an analyst.
+            bool: False if the user isn't an analyst, True if the user is an analyst.
         """
         return False
 
     def __eq__(self, other):
-        """Equals to ensure that we're not using the same user.
+        """Compares two users. They are the same user if they have the same id and the same email.
 
         Args:
-            other (object): is how we call User1 to compare it to the User2
+            other (object): The other object to compare with this user.
 
         Returns:
-            bool: Returns True in case that User1 and User2 are equals and false in case that they're not.
+            bool: True if both are users with the same id and email, False if not.
         """
 
         if not isinstance(other, User):
@@ -67,10 +73,11 @@ class User:
         return False
 
     def __hash__(self):
+        """Uses the id, so users can be stored in sets and dictionaries."""
         return hash(self.id)
 
     def get_role(self):
-        """Function to get the User's role
+        """Gets the user's role.
 
         Returns:
             str: The user's role.
@@ -78,28 +85,33 @@ class User:
         return self.ROLE
 
 class Analyst(User):
-    """is the subclass analyst of User
+    """A user who handles incidents: can see all of them and manage the users.
 
     Args:
-        User (Class): The parent Class
+        User (Class): The parent class
     """
 
     ROLE = "ANALYST"
 
     def view_all_incidents(self):
-        """Is a permission to let the analyst view the incidents
+        """Permission to let the analyst view all the incidents.
 
         Returns:
-            bool: Is true because an analyst can
+            bool: True, because an analyst can.
         """
         return True
 
     def is_analyst(self) -> bool:
+        """Tells that this user is an analyst.
+
+        Returns:
+            bool: True, always.
+        """
         return True
 
 
 class Employee(User):
-    """Is the subclass Employee of User
+    """A user who reports incidents. It can only see the incidents it created.
 
     Args:
         User (Class): The parent class
@@ -108,10 +120,10 @@ class Employee(User):
     ROLE = "EMPLOYEE"
 
     def view_all_incidents(self):
-        """Is a permission to deny the employees to view all incidents
+        """Permission that denies the employee to view all the incidents.
 
         Returns:
-            bool: Is False becouse an employee can't
+            bool: False, because an employee can't.
         """
         return False
 
