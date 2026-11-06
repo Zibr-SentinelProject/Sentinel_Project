@@ -12,12 +12,22 @@ from app.routes.users import users_bp
 
 
 def create_app():
-    """Create and configure the Flask app."""
+    """Creates and configures the Flask app (application factory).
+
+    It sets the secret key, connects the database, registers the error handlers and adds
+    the blueprints (groups of routes). Flask and the tests call it to get a new app.
+
+    Returns:
+        Flask: The app, ready to run
+    """
     app = Flask(__name__)
     # The login session is signed with this key; without it Flask cannot store the session.
     app.secret_key = os.getenv("SECRET_KEY")
+    # Opens one database connection per request and closes it when the request ends.
     init_db(app)
+    # Turns the exceptions of the services (PermissionError, LookupError, ValueError) into messages.
     register_error_handlers(app)
+    # Each blueprint groups the routes of one topic.
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(incidents_bp)
