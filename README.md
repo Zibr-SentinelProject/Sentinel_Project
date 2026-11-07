@@ -30,6 +30,52 @@ Browser -> routes -> services -> repositories -> database (MariaDB)
 - **repositories** (`app/repositories/`): all the SQL. Return model objects.
 - **models** (`app/models/`): the data classes above.
 
+## Repository contents
+
+### Application (`app/`)
+
+| Folder | What's inside |
+|--------|---------------|
+| `db/` | Database connection (`database.py`). |
+| `models/` | `User`, `Incident`, `Comment` and `Attachment`. |
+| `repositories/` | All the SQL. `abc_repo.py` is the abstract base class every repository extends. |
+| `services/` | Business rules. `factory.py` wires services to repositories, and `link_service.py` fetches the page title of an incident's source link. |
+| `routes/` | Flask blueprints, one per area (see below). |
+| `templates/` | Jinja2 pages. `base.html` is the shared layout. |
+| `static/` | Stylesheet (`css/style.css`) and favicon (`img/favicon.svg`). |
+
+### Routes (`app/routes/`)
+
+| File | Handles |
+|------|---------|
+| `common.py` | Home page. |
+| `auth.py` | Register, log in, log out and change password. |
+| `incidents.py` | List, create, view, assign and close incidents. |
+| `comments.py` | Comments on an incident. |
+| `attachments.py` | Download an incident's attachment. |
+| `users.py` | Create users and change roles (analysts only). |
+
+### Tests and docs
+
+| Path | What's inside |
+|------|---------------|
+| `tests/unit/` | Tests for models, repositories and services. |
+| `tests/functional/` | Tests of the whole app through the Flask test client. |
+| `docs/Sentinel-Project-Report.md` | Phase 1 security and design report. |
+
+### Project files (root)
+
+| File | Purpose |
+|------|---------|
+| `run.py` | Entry point. Exposes the `app` variable that Flask looks for. |
+| `init.sql` | Creates the tables and the initial analyst. |
+| `Dockerfile` | Image for the web app. |
+| `docker-compose.yml` | Web app + MariaDB for development. |
+| `env.example` | Template for your `.env` (database and secret key). |
+| `requirements.txt` | Python dependencies. |
+| `pyproject.toml` | `ruff` and `pytest` configuration. |
+| `.github/workflows/ci.yml` | CI that runs on every push and pull request. |
+
 ## Run in development (Docker)
 
 Needs Docker with Compose.
