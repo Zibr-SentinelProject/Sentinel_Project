@@ -27,6 +27,7 @@
 5. [Shortcuts](#5-shortcuts)
 6. [Preliminary security analysis](#6-preliminary-security-analysis)
    - [6.1 What we protect and who can reach it](#61-what-we-protect-and-who-can-reach-it) · [6.2 What already helps](#62-what-already-helps)
+7. [Changes from the team chart](#7-changes-from-the-team-chart)
 
 ---
 
@@ -292,3 +293,24 @@ These are real strengths of the current design. They do not make the application
 - **The user is re-read from the database on every request,** so a role change or a deleted account takes effect immediately.
 - **Registration always creates an employee,** and the role is validated against a fixed list, so a form cannot request the analyst role directly.
 - **Changing the password requires the current one.**
+
+---
+
+## 7. Changes from the team chart
+
+The team chart set how we would organise the work. Two things changed once we started.
+
+### Change 1: Branches by layer, not by feature
+
+| | |
+| :--- | :--- |
+| <span style="color:#7F7F7F">**Team chart**</span> | The branches were organised by feature. |
+| <span style="color:#1F4E79">**We did**</span> | We organised the branches by layer (models, repositories, services and routes). |
+| <span style="color:#548235">**Why**</span> | Working one layer at a time made us internalise the concepts of the architecture we chose (section 2): what each layer is responsible for and how it only talks to the one below it. |
+
+### Change 2: Work divided by model
+
+| | |
+| :--- | :--- |
+| <span style="color:#1F4E79">**We did**</span> | We divided the work by model. One of us took `Incident`, another took `User`, and the third took `Comment` and `Attachment`. |
+| <span style="color:#548235">**Why**</span> | Each member became responsible for the whole flow of their models, from creating the model to writing the route. |
