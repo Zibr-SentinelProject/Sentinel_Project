@@ -1,6 +1,12 @@
 from uuid import UUID
 
 from app.models.user import Employee, ROLE_CLASSES, User
+from app.utils.security import hash_password, verify_password
+
+MIN_PASSWORD_LENGTH = 8
+MAX_PASSWORD_BYTES = 72  
+
+_DUMMY_HASH = hash_password("potato_team")
 
 
 class UserService:
@@ -39,8 +45,9 @@ class UserService:
         """Anyone can register, but the account is always an employee.
         Only an analyst can give the analyst role (see create_user)."""
         self._check_email_is_free(email)
-
-        new_user = Employee(name, email, password)
+        self._check_password_is_valid(password)
+        pass_hashed = hash_password(password)
+        new_user = Employee(name, email, pass_hashed)
         return self.user_repo.create(new_user)
 
     def create_user(self, person: User, name: str, email: str, password: str, role: str):
@@ -50,9 +57,11 @@ class UserService:
         if role not in ROLE_CLASSES:
             raise ValueError("Invalid role")
         self._check_email_is_free(email)
+        self._check_password_is_valid(password)
 
         user_class = ROLE_CLASSES[role]
-        new_user = user_class(name, email, password)
+        pass_hashed = hash_password(password)
+        new_user = user_class(name, email, pass_hashed)
         return self.user_repo.create(new_user)
 
     def list_users(self, person: User):
@@ -73,20 +82,35 @@ class UserService:
 
     def change_password(self, user: User, current_password: str, new_password: str):
         """Each user changes their own password, confirming the current one first."""
-        if user.password != current_password:
+        if not verify_password(current_password, user.password):
             raise ValueError("Current password is incorrect")
-        if not new_password:
-            raise ValueError("New password is required")
-
-        user.change_password(new_password)
+        self._check_password_is_valid(new_password)
+        pass_hashed = hash_password(new_password)
+        user.change_password(pass_hashed)
         return self.user_repo.update(user.id, user)
 
     def authenticate(self, email: str, password: str):
         """Return the user if the email and password match; otherwise None."""
         user = self.user_repo.get_by_email(email)
-        if user is None or user.password != password:
+        if user is None:
+            # Spend the same time as a real check so timing does not reveal
+            # which emails are registered.
+            verify_password(password, _DUMMY_HASH)
+            return None
+        if not verify_password(password, user.password):
             return None
         return user
+
+    def _check_password_is_valid(self, password: str):
+        """Same password rules for register, create_user and change_password."""
+        if not password or len(password) < MIN_PASSWORD_LENGTH:
+            raise ValueError(
+                f"Password must be at least {MIN_PASSWORD_LENGTH} characters"
+            )
+        if len(password.encode("utf-8")) > MAX_PASSWORD_BYTES:
+            raise ValueError(
+                f"Password must be at most {MAX_PASSWORD_BYTES} bytes"
+            )
 
     def _check_email_is_free(self, email: str):
         """Two accounts cannot share an email (used by register and create_user)."""
