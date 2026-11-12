@@ -23,6 +23,14 @@ def create_app():
     app = Flask(__name__)
     # The login session is signed with this key; without it Flask cannot store the session.
     app.secret_key = os.getenv("SECRET_KEY")
+
+    #Phase 2: Variables to protect the cookie
+    app.config["SESSION_COOKIE_HTTPONLY"] = True
+    app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+
+    cookie_secure = os.getenv("SESSION_COOKIE_SECURE", "false").lower() == "true"
+    app.config["SESSION_COOKIE_SECURE"] = cookie_secure
+
     # Opens one database connection per request and closes it when the request ends.
     init_db(app)
     # Turns the exceptions of the services (PermissionError, LookupError, ValueError) into messages.
