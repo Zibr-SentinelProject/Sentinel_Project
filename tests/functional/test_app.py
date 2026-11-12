@@ -82,7 +82,7 @@ def test_the_severity_filter_is_remembered_in_a_cookie(client, login, incidents)
 def test_an_employee_cannot_open_the_ticket_of_someone_else(client, login, incidents):
     login(ANA)
     incident = create_incident(client, incidents)
-    client.get("/logout")
+    client.post("/logout")
 
     login(EVA)
     page = client.get(f"/incidents/{incident.id}", follow_redirects=True).text
@@ -93,7 +93,7 @@ def test_an_employee_cannot_open_the_ticket_of_someone_else(client, login, incid
 def test_an_analyst_assigns_and_closes_a_ticket(client, login, users, incidents):
     login(ANA)
     incident = create_incident(client, incidents)
-    client.get("/logout")
+    client.post("/logout")
 
     login(MARTA)
     marta = users.get_by_email(MARTA)

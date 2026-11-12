@@ -8,6 +8,12 @@ import pytest
 from app import create_app
 from app.models.user import Analyst, Employee
 from app.services import factory
+from app.utils.security import hash_password
+
+# Valid password (8+ characters). It is hashed once here because bcrypt is slow on purpose
+# and doing it for every user of every test would make the tests take much longer.
+PASSWORD = "secret123"
+PASSWORD_HASH = hash_password(PASSWORD)
 
 
 class FakeUserRepo:
@@ -75,9 +81,9 @@ class FakeCommentRepo:
 @pytest.fixture
 def users():
     repo = FakeUserRepo()
-    for user in (Employee("Ana", "ana@example.com", "secret"),
-                 Employee("Eva", "eva@example.com", "secret"),
-                 Analyst("Marta", "marta@example.com", "secret")):
+    for user in (Employee("Ana", "ana@example.com", PASSWORD_HASH),
+                 Employee("Eva", "eva@example.com", PASSWORD_HASH),
+                 Analyst("Marta", "marta@example.com", PASSWORD_HASH)):
         repo.create(user)
     return repo
 
@@ -106,5 +112,5 @@ def client(monkeypatch, users, incidents):
 @pytest.fixture
 def login(client):
     def login_as(email):
-        return client.post("/login", data={"email": email, "password": "secret"})
+        return client.post("/login", data={"email": email, "password": PASSWORD})
     return login_as
