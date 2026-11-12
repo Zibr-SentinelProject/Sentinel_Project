@@ -11,7 +11,6 @@ def hash_password (password: str) -> str:
 @staticmethod
 def verify_password(password:str, hashed:str)->bool:
     password_bytes = password.encode('utf-8')
-    hash = hashed.encode('utf-8')
-    return bcrypt.checkpw(password_bytes, hash)
-    
-    
+    hashed_bytes = hashed.encode('utf-8')
+    return bcrypt.checkpw(password_bytes, hashed_bytes)
+

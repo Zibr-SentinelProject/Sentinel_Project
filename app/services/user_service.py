@@ -4,7 +4,7 @@ from app.models.user import Employee, ROLE_CLASSES, User
 from app.utils.security import hash_password, verify_password
 
 MIN_PASSWORD_LENGTH = 8
-MAX_PASSWORD_BYTES = 72  
+MAX_PASSWORD_BYTES = 72
 
 _DUMMY_HASH = hash_password("potato_team")
 
