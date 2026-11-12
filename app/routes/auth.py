@@ -100,8 +100,10 @@ def change_password():
     return render_template("edit_user.html", user=user, success="Contraseña actualizada")
 
 
-@auth_bp.get("/logout")
+@auth_bp.post("/logout")
 def logout():
-    """Logs the user out and goes to the login."""
+    """Logs the user out and goes to the login.
+
+    It is a POST so another site cannot log the user out with a simple link or image."""
     session.clear()
     return redirect("/login")
