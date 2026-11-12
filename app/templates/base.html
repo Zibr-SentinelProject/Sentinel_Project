@@ -19,7 +19,9 @@
           <summary>{{ session.get('user_name', 'My account') }}</summary>
           <div class="user-menu-list">
             <a href="/password">Change password</a>
-            <a href="/logout">Log out</a>
+            <form method="post" action="/logout">
+              <button type="submit">Log out</button>
+            </form>
           </div>
         </details>
         {% else %}

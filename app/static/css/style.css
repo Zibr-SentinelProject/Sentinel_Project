@@ -164,14 +164,22 @@ h3 {
   box-shadow: var(--shadow);
 }
 
-.nav .user-menu-list a {
+.nav .user-menu-list a,
+.nav .user-menu-list button {
   display: block;
+  width: 100%;
   padding: 0.5rem 0.75rem;
+  border: 0;
   border-radius: 8px;
+  background: none;
   color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
-.nav .user-menu-list a:hover {
+.nav .user-menu-list a:hover,
+.nav .user-menu-list button:hover {
   background: var(--rose-soft);
   color: var(--pink);
 }
