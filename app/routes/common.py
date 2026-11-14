@@ -1,7 +1,9 @@
+from functools import wraps
 from uuid import UUID
 
 from flask import Blueprint, flash, redirect, render_template, request, session
 
+from app.services.authorization import AccessDeniedError, require
 from app.services.factory import get_user_service
 
 main_bp = Blueprint("main", __name__)
@@ -26,8 +28,38 @@ def current_user():
         return None
 
 
+def requires_permission(action):
+    """Decorator for the routes that are about no object (e.g. /users): login first, then the permission.
+
+    Without a login it goes to the login. Without permission, require raises AccessDeniedError (403).
+    The view receives the logged-in user as its first argument, so it does not look it up again.
+
+    Args:
+        action (str): The action to check, one of the constants of app.services.authorization
+    """
+    def decorator(view):
+        @wraps(view)
+        def wrapper(*args, **kwargs):
+            user = current_user()
+            if user is None:
+                return redirect("/login")
+            require(user, action)
+            return view(user, *args, **kwargs)
+        return wrapper
+    return decorator
+
+
 def register_error_handlers(app):
     """Services raise exceptions; here we turn them into a flashed message for the whole app."""
+
+    @app.errorhandler(AccessDeniedError)
+    def access_denied(error):
+        """A logged-in user is not allowed (AccessDeniedError): the error page itself, with the code chosen in require.
+
+        It never redirects, so nothing from the request (like the Referer header) decides where the user goes.
+        """
+        message = "Not found" if error.status == 404 else "Forbidden"
+        return render_template("error.html", status=error.status, message=message), error.status
 
     def back_with_error(error):
         """Shows the error message and goes back to the previous page (or to the incidents)."""
