@@ -113,6 +113,15 @@ def test_an_admin_changes_the_role_of_an_existing_user(service, repo):
     repo.update_role.assert_called_once_with("ana-id", "ANALYST")
 
 
+def test_an_admin_cannot_change_their_own_role(service, repo):
+    admin = Admin("Root", "root@example.com", PASSWORD_HASH)
+    repo.get_by_id.return_value = admin
+
+    with pytest.raises(ValueError):
+        service.change_role(admin, admin.id, "EMPLOYEE")
+    repo.update_role.assert_not_called()
+
+
 def test_only_users_that_handle_incidents_can_receive_an_assignment(service, repo):
     analyst = Analyst("Marta", "marta@example.com", PASSWORD_HASH)
     repo.get_all.return_value = [

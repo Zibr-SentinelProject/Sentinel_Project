@@ -74,10 +74,13 @@ class UserService:
 
         Raises:
             AccessDeniedError: If the person cannot manage users (checked first, so it never reveals if the user exists)
-            ValueError: If the role is not valid
+            ValueError: If the person tries to change their own role, or the role is not valid
             LookupError: If the user does not exist
         """
         require(person, MANAGE_USERS)
+        # Nobody changes their own role: this way there is always at least one admin left.
+        if user_id == person.id:
+            raise ValueError("You cannot change your own role")
         if role not in ROLE_CLASSES:
             raise ValueError("Invalid role")
         # get_user raises LookupError if the user does not exist.

@@ -3,7 +3,7 @@ from uuid import uuid4
 
 import pytest
 
-from app.models.user import Analyst, Employee
+from app.models.user import Admin, Analyst, Employee
 
 ANA = "ana@example.com"
 MARTA = "marta@example.com"
@@ -72,6 +72,15 @@ def test_the_admin_changes_a_role(client, login, users):
     client.post(f"/users/{ana.id}/role", data={"role": "ANALYST"})
 
     assert isinstance(users.get_by_email(ANA), Analyst)
+
+
+def test_the_admin_cannot_change_their_own_role(client, login, users):
+    login(ROOT)
+    root = users.get_by_email(ROOT)
+
+    client.post(f"/users/{root.id}/role", data={"role": "EMPLOYEE"})
+
+    assert isinstance(users.get_by_email(ROOT), Admin)
 
 
 def test_changing_to_an_invalid_role_changes_nothing(client, login, users):
