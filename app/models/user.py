@@ -1,8 +1,9 @@
 import uuid
+import warnings
 
 
 class User:
-    """A person who uses Sentinel. It is the parent of Analyst and Employee.
+    """A person who uses Sentinel. It is the parent of Analyst, Employee and Admin.
 
     Each subclass sets its own ROLE and decides what the user can do.
     """
@@ -29,15 +30,24 @@ class User:
         return self._password
 
     def change_password(self, new_password: str):
-        """The only way to change the password (see UserService.change_password)."""
+        """The only way to change the password."""
         self._password = new_password
 
     def view_all_incidents(self):
         """Permission to know if the user can see all the incidents, depending on its role.
 
-        The base class does not decide it. Analyst and Employee override this method.
+        Returns:
+            bool: False by default. Subclasses override it to allow it.
         """
-        pass
+        return False
+
+    def handle_incidents(self):
+        """Permission to know if the user can be assigned to, close and comment on incidents.
+
+        Returns:
+            bool: False by default. Subclasses override it to allow it.
+        """
+        return False
 
     def create_tickets(self):
         """Permission to know if the user can create incidents.
@@ -48,10 +58,23 @@ class User:
         return True
 
     def is_analyst(self) -> bool:
-        """Tells if the user is an analyst or not.
+        """DEPRECATED: ask for a capability instead (handle_incidents, admin_all_users).
 
         Returns:
             bool: False if the user isn't an analyst, True if the user is an analyst.
+        """
+        warnings.warn(
+            "is_analyst() is deprecated; use a capability instead",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return False
+    
+    def admin_all_users(self):
+        """Permission to know if the user can manage all the users, depending on its role.
+
+        Returns:
+            bool: False by default. Subclasses override it to allow it.
         """
         return False
 
@@ -85,7 +108,7 @@ class User:
         return self.ROLE
 
 class Analyst(User):
-    """A user who handles incidents: can see all of them and manage the users.
+    """A user who handles incidents: can see all of them, and be assigned to, comment on and close them.
 
     Args:
         User (Class): The parent class
@@ -102,13 +125,33 @@ class Analyst(User):
         return True
 
     def is_analyst(self) -> bool:
-        """Tells that this user is an analyst.
+        """DEPRECATED: ask for a capability instead (handle_incidents, admin_all_users).
 
         Returns:
             bool: True, always.
         """
+        warnings.warn(
+            "is_analyst() is deprecated; use a capability instead",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         return True
 
+    def admin_all_users(self) -> bool:
+        """Permission to let the analyst manage all the users.
+
+        Returns:
+            bool: False, because an analyst can't.
+        """
+        return False
+
+    def handle_incidents(self):
+        """Permission to let the analyst be assigned to, close and comment on incidents.
+
+        Returns:
+            bool: True, because an analyst can.
+        """
+        return True
 
 class Employee(User):
     """A user who reports incidents. It can only see the incidents it created.
@@ -127,8 +170,50 @@ class Employee(User):
         """
         return False
 
+    def admin_all_users(self):
+        """Permission that denies the employee to manage all the users.
+
+        Returns:
+            bool: False, because an employee can't.
+        """
+        return False
+
+    def handle_incidents(self):
+        """Permission that denies the employee to be assigned to, close and comment on incidents.
+
+        Returns:
+            bool: False, because an employee can't.
+        """
+        return False
+
+class Admin(User):
+    """A user who manages the system. It can see all the incidents and manage the users.
+
+    Args:
+        User (Class): The parent class
+    """
+
+    ROLE = "ADMIN"
+
+    def view_all_incidents(self):
+        """Permission to let the admin view all the incidents.
+
+        Returns:
+            bool: True, because an admin can.
+        """
+        return True
+
+    def admin_all_users(self):
+        """Permission to let the admin manage all the users.
+
+        Returns:
+            bool: True, because an admin can.
+        """
+        return True
+    
 
 ROLE_CLASSES = {
     Analyst.ROLE: Analyst,
     Employee.ROLE: Employee,
+    Admin.ROLE: Admin,
 }
