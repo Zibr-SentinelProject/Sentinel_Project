@@ -69,7 +69,7 @@ class User:
             stacklevel=2,
         )
         return False
-    
+
     def admin_all_users(self):
         """Permission to know if the user can manage all the users, depending on its role.
 
@@ -210,7 +210,7 @@ class Admin(User):
             bool: True, because an admin can.
         """
         return True
-    
+
 
 ROLE_CLASSES = {
     Analyst.ROLE: Analyst,
