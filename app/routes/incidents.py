@@ -3,6 +3,7 @@ from uuid import UUID
 from flask import Blueprint, make_response, redirect, render_template, request
 
 from app.routes.common import current_user
+from app.services.authorization import MANAGE_USERS, authorize
 from app.services.factory import (
     get_comment_service,
     get_incident_service,
@@ -39,7 +40,8 @@ def list_incidents():
         state=int(state) if state else None,
     )
     response = make_response(render_template("incidents.html", user=user, incidents=incidents, title=title,
-                                             severity=severity, state=state))
+                                             severity=severity, state=state,
+                                             can_manage_users=authorize(user, MANAGE_USERS)))
     # The severity chosen in the filter becomes the default for the next visits.
     if "severity" in request.args:
         if severity:
@@ -101,7 +103,7 @@ def incident_detail(incident_id):
     incident = service.get_incident(user, incident_id)
     comments = get_comment_service().list_comments(user, incident_id)
     # Only analysts assign tickets, so only they need the list of analysts.
-    analysts = get_user_service().list_analysts() if user.is_analyst() else []
+    analysts = get_user_service().list_assignable_users() if user.is_analyst() else []
     # Only the creator and the assigned analyst participate (comment); the rule lives in the service.
     can_participate = service.can_participate(user, incident)
     return render_template("incident.html", user=user, incident=incident, comments=comments,
