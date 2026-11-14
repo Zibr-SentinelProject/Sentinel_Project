@@ -1,4 +1,9 @@
+"""The only place that decides what a user can do.
 
+Routes and services never ask a role or compare owners themselves: they call authorize().
+This is also the only module that reads the role capabilities (view_all_incidents,
+handle_incidents, admin_all_users) and compares who created or was assigned to an incident.
+"""
 
 VIEW_INCIDENT = "view_incident"
 LIST_INCIDENTS = "list_incidents"
@@ -12,7 +17,19 @@ MANAGE_USERS = "manage_users"
 
 
 def authorize(user, action: str, incident=None) -> bool:
+    """Tells if the user can do the action. Anything not explicitly allowed is denied.
 
+    Args:
+        user (User): The user who wants to do the action. None (nobody logged in) is denied.
+            Exception: for BE_ASSIGNEE, user is the person who would RECEIVE the assignment
+            (load it from the analyst_id of the form), not the logged-in user who assigns.
+        action (str): One of the action constants of this module.
+        incident (Incident, optional): The incident the action is about, when it has one.
+
+    Returns:
+        bool: True if the user can do it, False if not, if the action is unknown,
+            or if the action is about an incident and none was given.
+    """
     if user is None:
         return False
 

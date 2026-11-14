@@ -29,21 +29,41 @@ def current_user():
 
 
 def requires_permission(action):
-    """Decorator for the routes that are about no object (e.g. /users): login first, then the permission.
+    """Protects a route that is not about one object (e.g. /users): login first, then the permission.
 
-    Without a login it goes to the login. Without permission, require raises AccessDeniedError (403).
-    The view receives the logged-in user as its first argument, so it does not look it up again.
+    It is a decorator with a parameter, so it is built in three layers:
+        1. requires_permission(action) remembers WHICH permission is needed.
+        2. decorator(view) receives the route function and returns the protected version of it.
+        3. wrapper(...) is that protected version: it runs on EVERY request, before the route.
+    Layers 1 and 2 run once, when the app starts. Only layer 3 runs on each visit.
+
+    What the wrapper does on each request, in order:
+        - Nobody logged in -> redirect to the login. The route does not run.
+        - Logged in but without permission -> require raises AccessDeniedError, and the
+          error handler answers with the error page. The route does not run.
+        - Logged in and allowed -> the route runs and receives the user as its first
+          argument, so it does not have to look the user up again.
+
+    Usage (the route decorator goes first, the permission right under it):
+        @bp.route("/users")
+        @requires_permission(MANAGE_USERS)
+        def list_users(user):
+            ...
 
     Args:
-        action (str): The action to check, one of the constants of app.services.authorization
+        action (str): The permission to check, one of the constants of app.services.authorization.
     """
     def decorator(view):
+        # wraps keeps the name of the original route; Flask needs a different name for each one.
         @wraps(view)
         def wrapper(*args, **kwargs):
+            # 1. Who is logged in? (None if nobody)
             user = current_user()
             if user is None:
                 return redirect("/login")
+            # 2. Is this user allowed to do the action? Raises AccessDeniedError if not.
             require(user, action)
+            # 3. Everything is fine: run the real route, giving it the user.
             return view(user, *args, **kwargs)
         return wrapper
     return decorator
@@ -74,8 +94,8 @@ def register_error_handlers(app):
 
     @app.errorhandler(LookupError)
     def not_found(error):
-        """The user or incident does not exist (LookupError)."""
-        return back_with_error(error)
+        """Something does not exist (LookupError): the same 404 page as a denied incident, never a redirect."""
+        return render_template("error.html", status=404, message="Not found"), 404
 
     @app.errorhandler(ValueError)
     def bad_request(error):
