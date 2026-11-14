@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from app.models.user import Employee, ROLE_CLASSES, User
+from app.services.authorization import BE_ASSIGNEE, MANAGE_USERS, authorize, require
 from app.utils.security import hash_password, verify_password
 
 MIN_PASSWORD_LENGTH = 8
@@ -37,13 +38,13 @@ class UserService:
             raise LookupError("User not found")
         return user
 
-    def list_analysts(self):
-        """Users a ticket can be assigned to."""
-        return [user for user in self.user_repo.get_all() if user.is_analyst()]
+    def list_assignable_users(self):
+        """Users a ticket can be assigned to (the ones that can receive an assignment)."""
+        return [user for user in self.user_repo.get_all() if authorize(user, BE_ASSIGNEE)]
 
     def register(self, name: str, email: str, password: str):
         """Anyone can register, but the account is always an employee.
-        Only an analyst can give the analyst role (see create_user)."""
+        Only whoever manages the users can choose another role (see create_user)."""
         self._check_email_is_free(email)
         self._check_password_is_valid(password)
         pass_hashed = hash_password(password)
@@ -51,9 +52,8 @@ class UserService:
         return self.user_repo.create(new_user)
 
     def create_user(self, person: User, name: str, email: str, password: str, role: str):
-        """Only an analyst can create users and choose their role."""
-        if not person.is_analyst():
-            raise PermissionError("Only analysts can create users")
+        """Only whoever manages the users can create them and choose their role."""
+        require(person, MANAGE_USERS)
         if role not in ROLE_CLASSES:
             raise ValueError("Invalid role")
         self._check_email_is_free(email)
@@ -65,15 +65,19 @@ class UserService:
         return self.user_repo.create(new_user)
 
     def list_users(self, person: User):
-        """Only analysts can see the list of users."""
-        if not person.is_analyst():
-            raise PermissionError("Only analysts can list users")
+        """Only whoever manages the users can see the list of users."""
+        require(person, MANAGE_USERS)
         return self.user_repo.get_all()
 
     def change_role(self, person: User, user_id: UUID, role: str):
-        """Only an analyst can give or take away the analyst role."""
-        if not person.is_analyst():
-            raise PermissionError("Only analysts can change roles")
+        """Only whoever manages the users can change a role. The role must be one of ROLE_CLASSES.
+
+        Raises:
+            AccessDeniedError: If the person cannot manage users (checked first, so it never reveals if the user exists)
+            ValueError: If the role is not valid
+            LookupError: If the user does not exist
+        """
+        require(person, MANAGE_USERS)
         if role not in ROLE_CLASSES:
             raise ValueError("Invalid role")
         # get_user raises LookupError if the user does not exist.
