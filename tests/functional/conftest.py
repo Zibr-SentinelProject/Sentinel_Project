@@ -6,7 +6,7 @@ templates are the real ones and no database is needed.
 import pytest
 
 from app import create_app
-from app.models.user import Analyst, Employee
+from app.models.user import Admin, Analyst, Employee, ROLE_CLASSES
 from app.services import factory
 from app.utils.security import hash_password
 
@@ -32,6 +32,11 @@ class FakeUserRepo:
 
     def get_by_email(self, email):
         return next((user for user in self.users if user.email == email), None)
+
+    def update_role(self, user_id, role):
+        # The real repository only changes the column; reading it back builds the user with the new class.
+        user = self.get_by_id(user_id)
+        self.users[self.users.index(user)] = ROLE_CLASSES[role](user.name, user.email, user.password, id=user.id)
 
 
 class FakeIncidentRepo:
@@ -83,7 +88,8 @@ def users():
     repo = FakeUserRepo()
     for user in (Employee("Ana", "ana@example.com", PASSWORD_HASH),
                  Employee("Eva", "eva@example.com", PASSWORD_HASH),
-                 Analyst("Marta", "marta@example.com", PASSWORD_HASH)):
+                 Analyst("Marta", "marta@example.com", PASSWORD_HASH),
+                 Admin("Root", "root@example.com", PASSWORD_HASH)):
         repo.create(user)
     return repo
 
