@@ -52,6 +52,9 @@ class FakeIncidentRepo:
         # Most recent first, like the real repository.
         return [self._with_names(incident) for incident in reversed(self.incidents)]
 
+    def get_by_user(self, user_id):
+        return [incident for incident in self.get_all() if incident.user_id == user_id]
+
     def get_by_id(self, incident_id):
         incident = next((item for item in self.incidents if item.id == incident_id), None)
         return self._with_names(incident) if incident else None

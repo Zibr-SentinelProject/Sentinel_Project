@@ -85,9 +85,12 @@ def test_an_employee_cannot_open_the_ticket_of_someone_else(client, login, incid
     client.post("/logout")
 
     login(EVA)
-    page = client.get(f"/incidents/{incident.id}", follow_redirects=True).text
+    response = client.get(f"/incidents/{incident.id}", headers={"Referer": "https://evil.example/"})
 
-    assert "You cannot view this incident" in page
+    # Same 404 page as an incident that does not exist, and never a redirect.
+    assert response.status_code == 404
+    assert "Location" not in response.headers
+    assert "Not found" in response.text
 
 
 def test_an_analyst_assigns_and_closes_a_ticket(client, login, users, incidents):
@@ -102,3 +105,72 @@ def test_an_analyst_assigns_and_closes_a_ticket(client, login, users, incidents)
 
     assert incident.is_closed()
     assert "CLOSED" in client.get(f"/incidents/{incident.id}").text
+
+
+def test_a_missing_incident_and_a_forbidden_one_look_exactly_the_same(client, login, incidents):
+    from uuid import uuid4
+
+    login(ANA)
+    incident = create_incident(client, incidents)
+    client.post("/logout")
+    login(EVA)
+
+    forbidden = client.get(f"/incidents/{incident.id}")
+    missing = client.get(f"/incidents/{uuid4()}")
+
+    assert (forbidden.status_code, forbidden.text) == (missing.status_code, missing.text)
+
+
+def test_every_incident_route_answers_404_to_someone_who_may_not_use_it(client, login, incidents, users):
+    login(ANA)
+    incident = create_incident(client, incidents, file=(BytesIO(b"datos"), "informe.pdf"))
+    client.post("/logout")
+    login(EVA)
+    eva = users.get_by_email(EVA)
+
+    responses = [
+        client.get(f"/incidents/{incident.id}/attachment"),
+        client.post(f"/incidents/{incident.id}/comments", data={"content": "hola"}),
+        client.post(f"/incidents/{incident.id}/assign", data={"analyst_id": str(eva.id)}),
+        client.post(f"/incidents/{incident.id}/close"),
+    ]
+
+    assert [response.status_code for response in responses] == [404, 404, 404, 404]
+    assert incident.analyst_id is None and not incident.is_closed()
+
+
+def test_an_incident_cannot_be_assigned_to_an_employee_sent_by_the_browser(client, login, users, incidents):
+    login(ANA)
+    incident = create_incident(client, incidents)
+    client.post("/logout")
+    login(MARTA)
+    eva = users.get_by_email(EVA)
+
+    client.post(f"/incidents/{incident.id}/assign", data={"analyst_id": str(eva.id)})
+
+    assert incident.analyst_id is None
+
+
+def test_assign_with_a_missing_or_invalid_analyst_id_is_not_a_500(client, login, incidents):
+    login(ANA)
+    incident = create_incident(client, incidents)
+    client.post("/logout")
+    login(MARTA)
+
+    no_field = client.post(f"/incidents/{incident.id}/assign", data={})
+    not_a_uuid = client.post(f"/incidents/{incident.id}/assign", data={"analyst_id": "xyz"})
+
+    assert no_field.status_code < 500 and not_a_uuid.status_code < 500
+    assert incident.analyst_id is None
+
+
+def test_only_the_buttons_the_user_can_use_are_shown(client, login, incidents, users):
+    login(ANA)
+    incident = create_incident(client, incidents)
+    assert "Assign analyst" not in client.get(f"/incidents/{incident.id}").text
+    client.post("/logout")
+
+    login(MARTA)
+    page = client.get(f"/incidents/{incident.id}").text
+    assert "Assign analyst" in page
+    assert "Close incident" not in page
