@@ -1,4 +1,5 @@
 from functools import wraps
+from urllib.parse import urlparse
 from uuid import UUID
 
 from flask import Blueprint, flash, redirect, render_template, request, session
@@ -69,6 +70,24 @@ def requires_permission(action):
     return decorator
 
 
+def previous_page():
+    """The page the user came from, only if it is a page of this same app; otherwise the incidents.
+
+    The Referer header is written by whoever sent the request (for example a form on another site),
+    so it cannot be trusted as a destination: redirecting to it would send the user to any site.
+
+    Returns:
+        str: A path of this app (with its query string), never a full url.
+    """
+    referrer = urlparse(request.referrer or "")
+    same_site = referrer.netloc == request.host
+    # "//host" or "/\host" start with "/" but make the browser leave the site.
+    safe_path = referrer.path.startswith("/") and not referrer.path.startswith("//") and "\\" not in referrer.path
+    if not (same_site and safe_path):
+        return "/incidents"
+    return referrer.path + (f"?{referrer.query}" if referrer.query else "")
+
+
 def register_error_handlers(app):
     """Services raise exceptions; here we turn them into a flashed message for the whole app."""
 
@@ -85,7 +104,7 @@ def register_error_handlers(app):
         """Shows the error message and goes back to the previous page (or to the incidents)."""
         # flash() keeps the message in the session; base.html shows it on the page we go back to.
         flash(str(error), "error")
-        return redirect(request.referrer or "/incidents")
+        return redirect(previous_page())
 
     @app.errorhandler(PermissionError)
     def forbidden(error):
