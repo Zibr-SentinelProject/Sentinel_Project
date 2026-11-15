@@ -16,7 +16,7 @@ def get_user_service():
 
 def get_incident_service():
     """Creates an IncidentService connected to the database of the current request."""
-    return IncidentService(IncidentRepository(get_db()))
+    return IncidentService(IncidentRepository(get_db()), get_user_service())
 
 
 def get_comment_service():
