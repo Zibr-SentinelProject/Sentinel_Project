@@ -3,7 +3,13 @@ from uuid import UUID
 from flask import Blueprint, make_response, redirect, render_template, request
 
 from app.routes.common import current_user
-from app.services.authorization import MANAGE_USERS, authorize
+from app.services.authorization import (
+    ASSIGN_INCIDENT,
+    CLOSE_INCIDENT,
+    COMMENT_INCIDENT,
+    MANAGE_USERS,
+    authorize,
+)
 from app.services.factory import (
     get_comment_service,
     get_incident_service,
@@ -102,12 +108,14 @@ def incident_detail(incident_id):
     service = get_incident_service()
     incident = service.get_incident(user, incident_id)
     comments = get_comment_service().list_comments(user, incident_id)
-    # Only analysts assign tickets, so only they need the list of analysts.
-    analysts = get_user_service().list_assignable_users() if user.is_analyst() else []
-    # Only the creator and the assigned analyst participate (comment); the rule lives in the service.
-    can_participate = service.can_participate(user, incident)
-    return render_template("incident.html", user=user, incident=incident, comments=comments,
-                           analysts=analysts, can_participate=can_participate)
+    # The page only shows what the user can do, with the same rule the services apply when a form is sent.
+    can_comment = authorize(user, COMMENT_INCIDENT, incident)
+    can_assign = authorize(user, ASSIGN_INCIDENT, incident)
+    can_close = authorize(user, CLOSE_INCIDENT, incident)
+    # Only who can assign needs the list of users that can receive it.
+    analysts = get_user_service().list_assignable_users() if can_assign else []
+    return render_template("incident.html", user=user, incident=incident, comments=comments, analysts=analysts,
+                           can_comment=can_comment, can_assign=can_assign, can_close=can_close)
 
 
 @incidents_bp.post("/incidents/<uuid:incident_id>/assign")
@@ -123,7 +131,8 @@ def assign_incident(incident_id):
     if user is None:
         return redirect("/login")
 
-    analyst_id = UUID(request.form.get("analyst_id"))
+    # Without a default, a missing field is None and UUID(None) is a TypeError (a 500); "" is a ValueError.
+    analyst_id = UUID(request.form.get("analyst_id", ""))
     service = get_incident_service()
     service.assign_incident(user, incident_id, analyst_id)
     return redirect(f"/incidents/{incident_id}")
