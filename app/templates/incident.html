@@ -56,7 +56,7 @@
             <p>No comments yet.</p>
             {% endfor %}
 
-            {% if can_participate %}
+            {% if can_comment %}
             <form class="comment-form" method="post" action="/incidents/{{ incident.id }}/comments">
               <div class="field">
                 <label for="content">New comment</label>
@@ -75,8 +75,8 @@
           <section class="card">
             <h2>Ticket management</h2>
 
-            {# Any analyst can assign if none is assigned; if there is one, only the assigned analyst (who can pass it on to another). #}
-            {% if user.is_analyst() and not incident.is_closed() and (incident.analyst_id is none or incident.analyst_id == user.id) %}
+            {# can_assign (from authorize): any analyst if none is assigned; if there is one, only the assigned analyst. #}
+            {% if can_assign and not incident.is_closed() %}
             <form method="post" action="/incidents/{{ incident.id }}/assign">
               <div class="field">
                 <label for="analyst_id">Assign analyst</label>
@@ -90,7 +90,7 @@
             </form>
             {% endif %}
 
-            {% if user.is_analyst() and not incident.is_closed() and incident.analyst_id == user.id %}
+            {% if can_close and not incident.is_closed() %}
             <form method="post" action="/incidents/{{ incident.id }}/close">
               <button class="btn btn-block btn-danger" type="submit">Close incident</button>
             </form>
