@@ -1,5 +1,4 @@
 import uuid
-import warnings
 
 
 class User:
@@ -49,26 +48,13 @@ class User:
         """
         return False
 
-    def create_tickets(self):
+    def create_incident(self):
         """Permission to know if the user can create incidents.
 
         Returns:
             bool: True, because every user can create incidents.
         """
         return True
-
-    def is_analyst(self) -> bool:
-        """DEPRECATED: ask for a capability instead (handle_incidents, admin_all_users).
-
-        Returns:
-            bool: False if the user isn't an analyst, True if the user is an analyst.
-        """
-        warnings.warn(
-            "is_analyst() is deprecated; use a capability instead",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return False
 
     def admin_all_users(self):
         """Permission to know if the user can manage all the users, depending on its role.
@@ -122,19 +108,6 @@ class Analyst(User):
         Returns:
             bool: True, because an analyst can.
         """
-        return True
-
-    def is_analyst(self) -> bool:
-        """DEPRECATED: ask for a capability instead (handle_incidents, admin_all_users).
-
-        Returns:
-            bool: True, always.
-        """
-        warnings.warn(
-            "is_analyst() is deprecated; use a capability instead",
-            DeprecationWarning,
-            stacklevel=2,
-        )
         return True
 
     def admin_all_users(self) -> bool:
