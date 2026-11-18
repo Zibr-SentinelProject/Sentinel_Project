@@ -67,6 +67,7 @@ VALUES (1, 'LOW'), (2, 'MEDIUM'), (3, 'HIGH'), (4, 'CRITICAL');
 INSERT IGNORE INTO con_state (id, name)
 VALUES (1, 'OPEN'), (2, 'PENDING'), (3, 'CLOSED');
 
--- First analyst: without it nobody could create users (only an analyst can). Plain-text password on purpose.
+-- First analyst: without it nobody could create users (only an analyst can).
+-- The password is stored as a bcrypt hash (the login password is still analyst123, change it after the first login).
 INSERT IGNORE INTO user (name, email, password, role)
-VALUES ('Analista Inicial', 'analyst@sentinel.local', 'analyst123', 'ANALYST');
+VALUES ('Analista Inicial', 'analyst@sentinel.local', '$2b$12$U61bOfH1oi84eC03C./vK.oQvjdLmoKYG.c2j1EuKWF/MVIBjrAlu', 'ANALYST');
