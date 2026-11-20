@@ -19,12 +19,10 @@ def test_employees_and_analysts_get_403_in_every_users_route(client, login, user
 
     responses = [
         client.get("/users"),
-        client.get("/users/new"),
-        client.post("/users/new", data=NEW_USER),
         client.post(f"/users/{ana.id}/role", data={"role": "ADMIN"}),
     ]
 
-    assert [response.status_code for response in responses] == [403, 403, 403, 403]
+    assert [response.status_code for response in responses] == [403, 403]
     assert users.get_by_email("luis@example.com") is None
     assert isinstance(users.get_by_email(ANA), Employee)
 
@@ -49,6 +47,7 @@ def test_an_analyst_does_not_see_the_users_button(client, login):
     assert 'href="/users"' not in client.get("/incidents").text
 
 
+@pytest.mark.skip(reason="POST /users/new is commented out: anyone can register and the admin changes roles")
 def test_the_admin_creates_a_user_with_the_role_chosen(client, login, users):
     login(ROOT)
 
@@ -57,6 +56,7 @@ def test_the_admin_creates_a_user_with_the_role_chosen(client, login, users):
     assert isinstance(users.get_by_email("luis@example.com"), Analyst)
 
 
+@pytest.mark.skip(reason="POST /users/new is commented out: anyone can register and the admin changes roles")
 def test_creating_a_user_with_an_invalid_role_does_not_create_it(client, login, users):
     login(ROOT)
 

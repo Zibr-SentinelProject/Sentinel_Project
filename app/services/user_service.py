@@ -11,7 +11,11 @@ _DUMMY_HASH = hash_password("potato_team")
 
 
 class UserService:
-    """Rules for the users: who can register, create and see them."""
+    """Rules for the users: who can register, create and see them.
+
+    Deleting users is not implemented, to avoid orphan tickets: incidents point to the user who
+    created them and to the analyst assigned to them, and they would be left without an owner.
+    """
 
     def __init__(self, user_repo):
         """Creates the service.
@@ -52,7 +56,12 @@ class UserService:
         return self.user_repo.create(new_user)
 
     def create_user(self, person: User, name: str, email: str, password: str, role: str):
-        """Only whoever manages the users can create them and choose their role."""
+        """Only whoever manages the users can create them and choose their role.
+
+        On hold: the route that used this method (POST /users/new) is commented out. Anyone can already
+        register freely and an admin can change roles, so keeping that route would make the attack surface
+        bigger without any benefit. 
+        """
         require(person, MANAGE_USERS)
         if role not in ROLE_CLASSES:
             raise ValueError("Invalid role")

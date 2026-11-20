@@ -2,30 +2,31 @@
 import pytest
 
 ROOT = "root@example.com"
-INVALID_USER = {"name": "Luis", "email": "luis@example.com", "password": "secret123", "role": "SUPERUSER"}
+ANA = "ana@example.com"
 
 
-def send_invalid_form(client, referer):
-    """An admin sends a form that fails validation, with the given Referer header."""
+def send_invalid_form(client, users, referer):
+    """An admin sends a form that fails validation (a role that does not exist), with the given Referer header."""
+    ana = users.get_by_email(ANA)
     headers = {"Referer": referer} if referer is not None else {}
-    return client.post("/users/new", data=INVALID_USER, headers=headers)
+    return client.post(f"/users/{ana.id}/role", data={"role": "SUPERUSER"}, headers=headers)
 
 
-def test_it_goes_back_to_the_page_of_this_same_app(client, login):
+def test_it_goes_back_to_the_page_of_this_same_app(client, login, users):
     login(ROOT)
 
-    response = send_invalid_form(client, "http://localhost/users/new?x=1")
+    response = send_invalid_form(client, users, "http://localhost/users?x=1")
 
     assert response.status_code == 302
-    assert response.headers["Location"] == "/users/new?x=1"
+    assert response.headers["Location"] == "/users?x=1"
 
 
-def test_the_error_message_is_shown_on_the_page_it_goes_back_to(client, login):
+def test_the_error_message_is_shown_on_the_page_it_goes_back_to(client, login, users):
     login(ROOT)
 
-    send_invalid_form(client, "http://localhost/users/new")
+    send_invalid_form(client, users, "http://localhost/users")
 
-    assert "Invalid role" in client.get("/users/new").text
+    assert "Invalid role" in client.get("/users").text
 
 
 @pytest.mark.parametrize("referer", [
@@ -38,10 +39,10 @@ def test_the_error_message_is_shown_on_the_page_it_goes_back_to(client, login):
     "",
     None,
 ])
-def test_any_other_referer_goes_to_the_incidents(client, login, referer):
+def test_any_other_referer_goes_to_the_incidents(client, login, users, referer):
     login(ROOT)
 
-    response = send_invalid_form(client, referer)
+    response = send_invalid_form(client, users, referer)
 
     assert response.status_code == 302
     assert response.headers["Location"] == "/incidents"

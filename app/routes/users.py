@@ -8,30 +8,34 @@ from app.services.factory import get_user_service
 users_bp = Blueprint("users", __name__)
 
 
-@users_bp.get("/users/new")
-@requires_permission(MANAGE_USERS)
-def new_user_page(user):
-    """Shows the form to create a user. Only whoever manages the users can see it.
-
-    If the user is not logged in, it goes to the login; without permission it answers 403.
-    """
-    return render_template("new_user.html", user=user, roles=ROLE_CLASSES)
-
-
-@users_bp.post("/users/new")
-@requires_permission(MANAGE_USERS)
-def create_user(user):
-    """Creates a user, with the role chosen, from the form. Only whoever manages the users can do it.
-
-    If the user is not logged in, it goes to the login; without permission it answers 403.
-    The role is checked against ROLE_CLASSES in the service. When it works, it goes to the list of incidents.
-    """
-    name = request.form.get("name")
-    email = request.form.get("email")
-    password = request.form.get("password")
-    role = request.form.get("role")
-    get_user_service().create_user(user, name, email, password, role)
-    return redirect("/incidents")
+# Creating users from the admin panel is disabled (the routes below are commented out).
+# Anyone can already register freely (/register) and an admin can change roles (POST /users/<id>/role),
+# so these routes give no benefit and only make the attack surface bigger.
+# If registration is closed, enable these routes again and add a link to /users/new in users.html.
+# @users_bp.get("/users/new")
+# @requires_permission(MANAGE_USERS)
+# def new_user_page(user):
+#     """Shows the form to create a user. Only whoever manages the users can see it.
+#
+#     If the user is not logged in, it goes to the login; without permission it answers 403.
+#     """
+#     return render_template("new_user.html", user=user, roles=ROLE_CLASSES)
+#
+#
+# @users_bp.post("/users/new")
+# @requires_permission(MANAGE_USERS)
+# def create_user(user):
+#     """Creates a user, with the role chosen, from the form. Only whoever manages the users can do it.
+#
+#     If the user is not logged in, it goes to the login; without permission it answers 403.
+#     The role is checked against ROLE_CLASSES in the service. When it works, it goes to the list of incidents.
+#     """
+#     name = request.form.get("name")
+#     email = request.form.get("email")
+#     password = request.form.get("password")
+#     role = request.form.get("role")
+#     get_user_service().create_user(user, name, email, password, role)
+#     return redirect("/incidents")
 
 
 @users_bp.get("/users")

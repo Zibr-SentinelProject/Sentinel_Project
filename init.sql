@@ -67,7 +67,7 @@ VALUES (1, 'LOW'), (2, 'MEDIUM'), (3, 'HIGH'), (4, 'CRITICAL');
 INSERT IGNORE INTO con_state (id, name)
 VALUES (1, 'OPEN'), (2, 'PENDING'), (3, 'CLOSED');
 
--- First admin: without one nobody could create users or change roles (only an admin can).
+-- First admin: without one nobody could change roles (only an admin can).
 -- The password is stored as a bcrypt hash (the login password is admin123, change it after the first login).
 INSERT IGNORE INTO user (name, email, password, role)
 VALUES ('Admin Inicial', 'admin@sentinel.local', '$2b$12$9zcCYp4BRiAZCjQbFiT7PO9rgMX4Kji3oM2TNvsHAXkxHjUjJkACe', 'ADMIN');
