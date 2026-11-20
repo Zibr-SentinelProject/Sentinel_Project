@@ -99,7 +99,7 @@ def change_password():
     except ValueError as error:
         # Shown in the same form, like the login error.
         return render_template("edit_user.html", user=user, error=str(error)), 400
-    return render_template("edit_user.html", user=user, success="Contraseña actualizada")
+    return render_template("edit_user.html", user=user, success="Password updated")
 
 
 @auth_bp.post("/logout")
