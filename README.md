@@ -66,6 +66,10 @@ Browser -> routes -> services -> repositories -> database (MariaDB)
 | `tests/unit/` | Tests for models, repositories, services and the authorization rules. |
 | `tests/functional/` | Tests of the whole app through the Flask test client: login and sessions, access to other users' incidents and routes (`test_access_other_routes.py`), roles over HTTP, user management and error redirects. |
 | `docs/Sentinel-Project-Report.md` | Phase 1 security and design report. |
+| `docs/phase2/Sentinel-Phase2-Report.md` | Phase 2 report: attack surface, authentication and access control. Its images are in `docs/phase2/media/`. |
+| `docs/phase2/Phase2-Sentinel.pdf` | The same Phase 2 report as a PDF. |
+| `docs/phase2/media/` | Screenshots used in the Phase 2 report (XSS pop-up, saved-URL test, 404 page). |
+| `docs/phase2/evidence-phase2/` | Evidence of the tests: `E01.json` (ffuf directory scan) and `E02.txt`. |
 
 ### Project files (root)
 
