@@ -60,7 +60,7 @@ class UserService:
 
         On hold: the route that used this method (POST /users/new) is commented out. Anyone can already
         register freely and an admin can change roles, so keeping that route would make the attack surface
-        bigger without any benefit. 
+        bigger without any benefit.
         """
         require(person, MANAGE_USERS)
         if role not in ROLE_CLASSES:
