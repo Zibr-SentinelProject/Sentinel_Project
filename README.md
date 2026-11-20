@@ -1,5 +1,4 @@
 # Sentinel_Project
-#### (CC) Proyect developed by Wara, Yaxche & Dani
 
 Sentinel is a small Flask app to report and follow security incidents. Employees open incidents, analysts handle them and admins manage the users.
 
@@ -177,4 +176,4 @@ ruff check .
 ```
 
 ---
-Made by Potato Team - Dani, Yaxche and Wara
+(CC) Proyect developed by Potato Team - Dani, Yaxche and Wara
