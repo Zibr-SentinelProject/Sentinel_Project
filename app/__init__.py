@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 from flask import Flask
 
@@ -30,6 +31,10 @@ def create_app():
 
     cookie_secure = os.getenv("SESSION_COOKIE_SECURE", "false").lower() == "true"
     app.config["SESSION_COOKIE_SECURE"] = cookie_secure
+
+    # The session expires 2 hours after the last request (it is renewed on every request).
+    app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=2)
+    app.config["SESSION_REFRESH_EACH_REQUEST"] = True
 
     # Opens one database connection per request and closes it when the request ends.
     init_db(app)

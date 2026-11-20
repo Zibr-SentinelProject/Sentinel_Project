@@ -31,6 +31,7 @@ def login():
         return render_template("login.html", error="Invalid email or password"), 401
 
     session.clear()
+    session.permanent = True
     session["user_id"] = str(user.id)
     # The name is stored so the header can show it without querying the DB on every page.
     session["user_name"] = user.name
@@ -64,6 +65,7 @@ def register():
 
     # The new employee is logged in right away, the same way as in login.
     session.clear()
+    session.permanent = True
     session["user_id"] = str(user.id)
     session["user_name"] = user.name
     return redirect("/incidents")
