@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS user (
     name     VARCHAR(100) NOT NULL,
     email    VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    role     ENUM('EMPLOYEE', 'ANALYST') NOT NULL DEFAULT 'EMPLOYEE'
+    role     ENUM('EMPLOYEE', 'ANALYST', 'ADMIN') NOT NULL DEFAULT 'EMPLOYEE'
 );
 
 CREATE TABLE IF NOT EXISTS con_severity (
@@ -67,7 +67,12 @@ VALUES (1, 'LOW'), (2, 'MEDIUM'), (3, 'HIGH'), (4, 'CRITICAL');
 INSERT IGNORE INTO con_state (id, name)
 VALUES (1, 'OPEN'), (2, 'PENDING'), (3, 'CLOSED');
 
--- First analyst: without it nobody could create users (only an analyst can).
+-- First admin: without one nobody could create users or change roles (only an admin can).
+-- The password is stored as a bcrypt hash (the login password is admin123, change it after the first login).
+INSERT IGNORE INTO user (name, email, password, role)
+VALUES ('Admin Inicial', 'admin@sentinel.local', '$2b$12$9zcCYp4BRiAZCjQbFiT7PO9rgMX4Kji3oM2TNvsHAXkxHjUjJkACe', 'ADMIN');
+
+-- First analyst, to handle incidents.
 -- The password is stored as a bcrypt hash (the login password is still analyst123, change it after the first login).
 INSERT IGNORE INTO user (name, email, password, role)
 VALUES ('Analista Inicial', 'analyst@sentinel.local', '$2b$12$U61bOfH1oi84eC03C./vK.oQvjdLmoKYG.c2j1EuKWF/MVIBjrAlu', 'ANALYST');
