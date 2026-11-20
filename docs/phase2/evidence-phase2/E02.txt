@@ -1,0 +1,11 @@
+GET /incidents HTTP/1.1
+Host: 172.20.202.41
+Cache-Control: max-age=0
+Accept-Language: es-ES,es;q=0.9
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Referer: http://172.20.202.41/login
+Accept-Encoding: gzip, deflate, br
+Cookie: session=eyJ1c2VyX2lkIjoiZDllOGMwZGUtZDg2MC0xMWYxLTliNjEtMDgwMDI3ZTI3Y2Y4IiwidXNlcl9uYW1lIjoiQW5hbGlzdGEgSW5pY2lhbCJ9.av25Dw.BGUaXLL07_o15Vp6JDd987xlQy0
+Connection: keep-alive
