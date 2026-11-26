@@ -36,6 +36,9 @@ def create_app():
     app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=2)
     app.config["SESSION_REFRESH_EACH_REQUEST"] = True
 
+    # The max size of the uploadable files
+    app.config["MAX_CONTET_SIZE"] = 5 * 1024 * 1024
+
     # Opens one database connection per request and closes it when the request ends.
     init_db(app)
     # Turns the exceptions of the services (PermissionError, LookupError, ValueError) into messages.
