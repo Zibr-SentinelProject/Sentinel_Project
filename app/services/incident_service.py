@@ -3,6 +3,7 @@ from uuid import UUID
 from app.models.attachment import Attachment
 from app.models.incident import Incident
 from app.models.user import User
+from app.utils.security import validate_attachment
 from app.services.authorization import (
     ASSIGN_INCIDENT,
     BE_ASSIGNEE,
@@ -39,6 +40,8 @@ class IncidentService:
             incident.source_url = source_url
             incident.source_title = fetch_page_title(source_url)
         if filename:
+            if not validate_attachment(filename, content):
+                raise ValueError("Unsupported or invalid attachment")
             incident.attachment = Attachment(incident.id, filename, filetype, len(content))
             incident.attachment.save_file(content)
 

@@ -1,4 +1,5 @@
 import bcrypt
+import magic
 
 # Whitelist of the extensions that can be uploaded, with the type we store for each one.
 # Anything not listed here is rejected (a whitelist, never a blacklist).
@@ -49,3 +50,18 @@ def verify_password(password:str, hashed:str)->bool:
     hashed_bytes = hashed.encode('utf-8')
     return bcrypt.checkpw(password_bytes, hashed_bytes)
 
+def validate_attachment(filename: str, content: bytes) -> bool:
+    """Returns whether the extension is allowed and matches the file's detected MIME type."""
+    if not filename or not isinstance(content, bytes) or not content:
+        return False
+
+    extension = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+    expected_type = ALLOWED_EXTENSIONS.get(extension)
+    if expected_type is None:
+        return False
+
+    try:
+        detected_type = magic.from_buffer(content[:2048], mime=True)
+    except (magic.MagicException, OSError):
+        return False
+    return detected_type == expected_type
