@@ -1,5 +1,17 @@
 import bcrypt
 
+# Whitelist of the extensions that can be uploaded, with the type we store for each one.
+# Anything not listed here is rejected (a whitelist, never a blacklist).
+ALLOWED_EXTENSIONS = {
+"txt": "text/plain",
+"log": "text/plain",
+"pdf": "application/pdf",
+"png": "image/png",
+"jpg": "image/jpeg",
+"jpeg": "image/jpeg",
+"pcap": "application/vnd.tcpdump.pcap",
+"pcapng": "application/vnd.tcpdump.pcap",
+}
 
 @staticmethod
 def hash_password (password: str) -> str:

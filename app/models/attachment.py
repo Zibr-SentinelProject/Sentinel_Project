@@ -8,8 +8,6 @@ class Attachment():
     # Folder where the files are saved; None means "use ATTACHMENTS_DIR from the .env, or attachments/ in the project
     # root". Only folder() knows it: the DB stores just the file name.
     PATHFILE = None
-    # Alowed file extensions for the attachments
-    _SUPORTEDFILETYPES=["pdf","jpg","jpeg","png","gif","mp4","log"]
 
     def __init__(self, incident_id: UUID, filename: str, filetype: str, filesize: int, id: UUID = None,
                  stored_name: str = None):
