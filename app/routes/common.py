@@ -3,6 +3,7 @@ from urllib.parse import urlparse
 from uuid import UUID
 
 from flask import Blueprint, flash, redirect, render_template, request, session
+from werkzeug.exceptions import RequestEntityTooLarge
 
 from app.services.authorization import AccessDeniedError, require
 from app.services.factory import get_user_service
@@ -120,3 +121,14 @@ def register_error_handlers(app):
     def bad_request(error):
         """The data sent is not valid (ValueError)."""
         return back_with_error(error)
+
+    @app.errorhandler(RequestEntityTooLarge)
+    def file_too_large(error):
+        """The request is bigger than MAX_CONTENT_LENGTH (413): Flask cut it before reading it.
+
+        str(error) would be the generic Werkzeug text, so we flash our own clear message.
+        """
+        max_size_mb = app.config["MAX_CONTENT_LENGTH"] // (1024 * 1024)
+        message = f"The file is too large. The maximum size is {max_size_mb} MB."
+        flash(message, "error")
+        return redirect(previous_page())
