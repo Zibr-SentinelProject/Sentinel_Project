@@ -37,7 +37,7 @@ def create_app():
     app.config["SESSION_REFRESH_EACH_REQUEST"] = True
 
     # The max size of the uploadable files
-    app.config["MAX_CONTET_SIZE"] = 5 * 1024 * 1024
+    app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 
     # Opens one database connection per request and closes it when the request ends.
     init_db(app)
