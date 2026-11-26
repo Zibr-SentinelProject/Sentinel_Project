@@ -29,4 +29,8 @@ def download_attachment(incident_id):
     if attachment is None:
         raise LookupError("This incident has no attachment")
     # send_file resolves relative paths from the app folder, not from where it was launched; hence resolve().
-    return send_file(attachment.path.resolve(), download_name=attachment.filename)
+    return send_file(
+    attachment.path.resolve(),
+    as_attachment=True,
+    download_name=attachment.filename,
+)
