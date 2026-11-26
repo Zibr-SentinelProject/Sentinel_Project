@@ -28,8 +28,12 @@ class Attachment():
         self.filename = filename
         self.filetype = filetype
         self.filesize = filesize
-        # Name of the file inside PATHFILE: the (unique) id plus the extension. The original name is only displayed.
-        self.stored_name = stored_name or f"{self.id}{Path(filename).suffix}"
+        if stored_name is None:
+            # PHASE3: Name of the file inside PATHFILE: only the random id, without any extension.
+            # Nothing typed by the user reaches the disk, and without an extension no web server
+            # would ever run or render the file. The original name is only kept in the DB to display it.
+            stored_name = str(self.id)
+        self.stored_name = stored_name
 
     @classmethod
     def folder(cls) -> Path:
